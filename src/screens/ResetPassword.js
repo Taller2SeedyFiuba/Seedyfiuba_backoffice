@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {app} from '../app/app'
-import {useHistory} from "react-router-dom";
+// import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,23 +32,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Login() {
+export function ResetPassword() {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const history = useHistory();
+    // const history = useHistory();
 
     function _setEmail(event) {  // CHEQUEAR O CAMBIAR
         setEmail(event.target.value);
     }
 
-    function _setPassword(event) {  // CHEQUEAR O CAMBIAR
-        setPassword(event.target.value);
-    }
-
-    function trySignIn() {  // CHEQUEAR O CAMBIAR
-        app.loginUser("asd");
-        history.push(app.routes().home);
+    function tryResetPassword() {  // CHEQUEAR O CAMBIAR
+        alert("Por implementar");
     }
 
     return (
@@ -59,7 +53,7 @@ export function Login() {
             <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-            Sign in
+            Recuperar Constraseña
             </Typography>
             <form className={classes.form} noValidate>
             <TextField
@@ -73,30 +67,20 @@ export function Login() {
                 value={email}
                 onChange={_setEmail}
             />
-            <TextField
-                variant="outlined"
-                margin="normal"
-                label="Contraseña"
-                type="password"
-                required
-                fullWidth
-                value={password}
-                onChange={_setPassword}
-            />
             <Button
                 // type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={trySignIn}
+                onClick={tryResetPassword}
             >
-                INGRESAR
+                ENVIAR MAIL
             </Button>
             <Grid container>
                 <Grid item xs>
-                <Link href={app.routes().resetpassword} variant="body2">
-                    Recuperar contraseña
+                <Link href={app.routes().login} variant="body2">
+                    Ingresar
                 </Link>
                 </Grid>
                 <Grid item>

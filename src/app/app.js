@@ -20,7 +20,8 @@ class App {
         return {
             login: '/',
             home: '/home',
-            signup: '/signup'
+            signup: '/signup',
+            resetpassword: '/resetpassword'
         }
     }
 
