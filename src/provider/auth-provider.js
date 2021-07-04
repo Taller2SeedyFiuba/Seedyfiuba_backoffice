@@ -1,32 +1,43 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import 'firebase/storage';
-import {FIREBASE_CONFIG} from '@env';
-import * as Client from  './../providers/client-provider.js';
+import * as Client from './client-provider.js';
+import {app} from '../app/app'
 
 export function init(){
-  return firebase.initializeApp(JSON.parse(FIREBASE_CONFIG));
+  if (!firebase.apps.length) {
+    return firebase.initializeApp(JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG));
+  }else {
+    return firebase.app();
+  }
 };
 
-export function establishObserver(navigation, nameConnect, nameDisconnect, nameGetData){
+export function establishObserver(history){
   firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    console.log('Se ha conectado');
-    user.getIdToken(true).then((token) => {
-          Client.getUserData(token).then(() => {
-          navigation.navigate(nameConnect);  
-        }).catch((error) => {
-          if(error % 100 == 4){
-            navigation.navigate(nameGetData, {email : user.email})
-          } else {
-            console.log(error);
-          }
-        })
-    });
-  } else {
-    console.log('Se ha desconectado');
-    navigation.navigate(nameDisconnect);
-  }
+    if (user) {
+      console.log('Se ha conectado');
+      user.getIdToken(true).then((token) => {
+        app.loginUser(token);
+            Client.getUserData(token).then((resp) => {
+              app.loginRegisteredUSer(resp.id);
+              // history.push(app.routes().users);
+          }).catch((error) => {
+            if(Math.floor(error / 100) === 4){
+              app.loginRegisteredUSer("");
+              history.push({
+                pathname: app.routes().signupdata, 
+                state: {email: user.email}
+              });
+            } else {
+              console.log(error);
+            }
+          })
+      });
+    } else {
+      app.signOutUser();
+      // history.push(app.routes().login);
+      console.log('Se ha desconectado');
+    }
   });
 };
 
@@ -57,7 +68,7 @@ export function sendPasswordResetEmail(email){
 export function errorMessageTranslation(error){
 	switch (error.code) {
     case 'auth/email-already-exists':
-      return 'El correo electrónico ya está asosiado a una cuenta.';
+      return 'El correo electrónico ya está asociado a una cuenta.';
 
     case 'auth/invalid-email':
       return 'El corre electrónico no es válido.';
@@ -70,8 +81,9 @@ export function errorMessageTranslation(error){
 
     case 'auth/user-not-found':
       return 'El usuario indicado no existe.';
-  }
 
-	return 'Error interno. Revise sus credenciales o inténtelo más tarde.';//error.message.concat('(',error.code,')');
+    default:
+      return 'Error interno. Revise sus credenciales o inténtelo más tarde.'
+  }
 };
 

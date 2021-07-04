@@ -4,24 +4,16 @@
 // import RemoteRequester from "communication/requester/RemoteRequester";
 
 class App {
-    constructor() {
-        this._apiClient = undefined;
-    }
-
-    // apiClient() {
-    //     if (this._apiClient === undefined) {
-    //         this._setUpApiClient();
-    //     }
-
-    //     return this._apiClient;
-    // }
-
     routes() {
         return {
             login: '/',
-            home: '/home',
+            resetpassword: '/resetpassword',
             signup: '/signup',
-            resetpassword: '/resetpassword'
+            signupdata: '/signupdata',
+            users: '/users',
+            projects: '/projects',
+            servers: '/servers',
+            metrics: '/metrics'
         }
     }
 
@@ -29,8 +21,25 @@ class App {
         localStorage.setItem("token", token);
     }
 
+    loginRegisteredUSer(id) {
+        localStorage.setItem("id", id);
+    }
+
+    signOutUser() {
+        localStorage.setItem("token", "");
+        localStorage.setItem("id", "");
+    }
+
+    getToken() {
+        return localStorage.getItem("token");
+    }
+
     thereIsLoggedInUser() {
         return localStorage.getItem("token");
+    }
+
+    thereIsRegisteredUser() {
+        return localStorage.getItem("id");
     }
 
     // _setUpApiClient() {

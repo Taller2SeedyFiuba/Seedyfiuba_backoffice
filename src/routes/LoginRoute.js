@@ -6,7 +6,7 @@ export function LoginRoute({component: Component, ...rest}) {
     return (
         <Route {...rest}
             render={props => app.thereIsLoggedInUser() ?
-                <Redirect to={{pathname: app.routes().login}} /> :
+                <Redirect to={{pathname: app.routes().users}} /> :
                 <Component {...props}/>
             }
         />

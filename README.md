@@ -83,3 +83,7 @@ npm install @material-ui/icons
 ### Recharts
 
 npm install recharts
+
+### Firebase
+
+npm install firebase

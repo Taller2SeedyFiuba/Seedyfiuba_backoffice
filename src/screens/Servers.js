@@ -13,14 +13,18 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
+// import Link from '@material-ui/core/Link';
+import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from '../components/listItems';
+import {useHistory} from "react-router-dom";
+import ListItems from '../components/ListItems';
 import Chart from '../components/Chart';
 import Deposits from '../components/Deposits';
 import Orders from '../components/Orders';
+import * as Auth from '../provider/auth-provider'
+import { app } from '../app/app';
 
 const drawerWidth = 240;
 
@@ -103,9 +107,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Home() {
+export function Servers() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const history = useHistory();
+
+  React.useEffect(() => {
+    Auth.init();
+    Auth.establishObserver(history);
+  }, [])
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -113,6 +124,12 @@ export function Home() {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  function signOut() {
+    Auth.signOut();
+    app.signOutUser();  
+    history.push(app.routes().login);
+  }
 
   return (
     <div className={classes.root}>
@@ -131,6 +148,16 @@ export function Home() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Dashboard
           </Typography>
+          <Button
+                // type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={signOut}
+            >
+                SALIR
+            </Button>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
@@ -151,9 +178,7 @@ export function Home() {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
+        <ListItems />
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

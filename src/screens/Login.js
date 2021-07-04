@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {app} from '../app/app'
 import {useHistory} from "react-router-dom";
+import * as Auth from '../provider/auth-provider'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,6 +39,11 @@ export function Login() {
     const [password, setPassword] = React.useState('');
     const history = useHistory();
 
+    React.useEffect(() => {
+        Auth.init();
+        Auth.establishObserver(history);
+    }, [])
+
     function _setEmail(event) {  // CHEQUEAR O CAMBIAR
         setEmail(event.target.value);
     }
@@ -46,9 +52,12 @@ export function Login() {
         setPassword(event.target.value);
     }
 
-    function trySignIn() {  // CHEQUEAR O CAMBIAR
-        app.loginUser("asd");
-        history.push(app.routes().home);
+    async function trySignIn() {  // CHEQUEAR O CAMBIAR
+        try {
+            Auth.signInWithMailAndPassword(email, password);
+        } catch (error) {
+            console.log(error);
+        };
     }
 
     return (

@@ -9,8 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import {useHistory} from "react-router-dom";
 import {app} from '../app/app'
-// import {useHistory} from "react-router-dom";
+import * as Auth from '../provider/auth-provider'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,7 +36,12 @@ const useStyles = makeStyles((theme) => ({
 export function ResetPassword() {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
-    // const history = useHistory();
+    const history = useHistory();
+
+    React.useEffect(() => {
+        Auth.init();
+        Auth.establishObserver(history);
+    }, [])
 
     function _setEmail(event) {  // CHEQUEAR O CAMBIAR
         setEmail(event.target.value);
