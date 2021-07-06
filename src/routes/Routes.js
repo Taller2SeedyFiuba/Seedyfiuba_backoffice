@@ -12,8 +12,13 @@ import {ResetPassword} from "../screens/ResetPassword"
 import {Projects} from "../screens/Projects"
 import {Servers} from "../screens/Servers"
 import {Metrics} from "../screens/Metrics"
+import  * as Auth from "../provider/auth-provider"
 
 export default function App() {
+    React.useEffect(() => {
+        Auth.init();
+    }, [])
+
     return (
         <Router>
             <LoginRoute exact path={app.routes().login} component={Login}/>

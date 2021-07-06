@@ -12,6 +12,7 @@ import Container from '@material-ui/core/Container';
 import {app} from '../app/app'
 import {useHistory} from "react-router-dom";
 import * as Auth from "../provider/auth-provider"
+import * as Client from "../provider/client-provider"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,11 +41,6 @@ export function SignUp() {
   const [confPassword, setConfPassword] = React.useState('');
   const history = useHistory();
 
-  React.useEffect(() => {
-    Auth.init();
-    Auth.establishObserver(history);
-  }, [])
-
   function _setEmail(event) {  // CHEQUEAR O CAMBIAR
     setEmail(event.target.value);
   }
@@ -58,16 +54,37 @@ export function SignUp() {
   }
 
   function checkMailAndPassword() {
-    return (email.includes('@') && email.length() > 5 && password > 5);
+    return ((email.includes('@')) && (email.length() > 5) && 
+      (password.length() > 5) && (password == confPassword));
   }
 
-  function trySignUp() {  // CHEQUEAR O CAMBIAR
-    if (checkMailAndPassword) {
-      Auth.createUserWithMailAndPassword(email, password);
+  async function trySignUp() {  // CHEQUEAR O CAMBIAR
+    if (checkMailAndPassword()) {
+      try {
+        await Auth.createUserWithMailAndPassword(email, password);
+        let token = await Auth.getIdToken(true);
+        app.loginUser(token);
+        Client.getUserData(token).then((resp) => {
+            app.loginRegisteredUSer(resp.id);
+            history.push(app.routes().users);
+        }).catch((error) => {
+            if (Math.floor(error / 100) === 4){
+                app.loginRegisteredUSer("");
+                history.push({
+                  pathname: app.routes().signupdata, 
+                  state: {email: email}
+                });
+            } else {
+                console.log(error);
+            }
+        });
+      } catch (error) {
+          console.log(error);
+      };
     } else {
       alert("Error en email o contraseña.");
     }
-}
+  }
 
   return (
     <Container component="main" maxWidth="xs">

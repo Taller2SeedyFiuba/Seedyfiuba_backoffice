@@ -1,5 +1,3 @@
-// import {USERS_URL, USERS_ME_URL, PROJECT_NEW_URL, PROJECT_ME_URL, PROJECT_ID_URL} from '@env';
-
 function sendData(url, token, data){
   return fetch(url, {
   	method: 'POST',
@@ -34,72 +32,78 @@ function getData(url, token){
 };
 
 
-//Users
+// Users
 
-export async function getUserData(token){
+export async function getUserData(token) {
   return await getData(process.env.REACT_APP_USERS_ME_URL, token).catch((error) => {throw error});
 }
 
-export async function sendUserData(token, data){
+export async function sendUserData(token, data) {
   return await sendData(process.env.REACT_APP_USERS_URL, token, data).catch((error) => {throw error});
 }
 
-//Projects
+// Users admin
 
-export async function getProjectsMe(token){
-  return await getData(process.env.REACT_APP_PROJECT_ME_URL, token).catch((error) => {throw error});
+export async function getUsersAdmin(token, limit, page) {
+  const query = process.env.REACT_APP_ADMIN_USERS_URL + `?limit=${limit}&page=${page}`
+  return await getData(query, token).catch((error) => {throw error});
 }
 
-export async function getProjectsID(token, id){
-  return await getData(process.env.REACT_APP_PROJECT_ID_URL + id, token).catch((error) => {throw error});
+export async function getUserAdminByID(token, id) {
+  const query = process.env.REACT_APP_ADMIN_USERS_ID_URL + id
+  return await getData(query, token).catch((error) => {throw error});
 }
 
-export async function sendNewProject(token, data){
-  console.log(data.multimedia)
-  return await sendData('https://seedyfiuba-api-gateway.herokuapp.com/projects', token, data).catch((error) => {throw error});
-}
+// export async function promoteUserAdminByID(token, id) {
+//   const query = process.env.REACT_APP_ADMIN_USERS_ID_URL + id
+//   return await patchData(query, token).catch((error) => {throw error});
+// }
 
-function querySearchString(query){
-  const queryArray = [];
-  if(query.hasOwnProperty('tags')){
-    console.log(query.tags)
-    queryArray.push(query.tags.map((element) =>{return 'tags=' + element}).join('&'));
-  } 
-  if(query.hasOwnProperty('type')){
-    queryArray.push("type=" + query.type);
-  } 
+// Projects admin
 
-  if(query.hasOwnProperty('stage')){
-    queryArray.push("stage=" + query.stage);
+function querySearchString(data) {
+  const dataArray = [];
+
+  if (data.hasOwnProperty('limit')) {
+    dataArray.push("limit=" + data.limit);
   } 
 
-  if(query.hasOwnProperty('dist') && query.hasOwnProperty('lat') && query.hasOwnProperty('lng')){
-    queryArray.push("lat=" + query.lat);
-    queryArray.push("lng=" + query.lng);
-    queryArray.push("dist=" + query.dist);
+  if (data.hasOwnProperty('page')) {
+    dataArray.push("page=" + data.page);
+  } 
+
+  if (data.hasOwnProperty('ownerid')) {
+    dataArray.push("ownerid=" + data.ownerid);
   }
-  return queryArray.join('&')
-}
-export async function getSearchProject(token, query){
-  return await getData('https://seedyfiuba-api-gateway.herokuapp.com/projects/search?' + querySearchString(query), token, {}).catch((error) => {throw error});
+
+  if (data.hasOwnProperty('tags')) {
+    dataArray.push(data.tags.map((element) =>{return 'tags=' + element}).join('&'));
+  }
+
+  if (data.hasOwnProperty('type')) {
+    dataArray.push("type=" + data.type);
+  } 
+
+  if (data.hasOwnProperty('stage')) {
+    dataArray.push("stage=" + data.stage);
+  } 
+
+  if (data.hasOwnProperty('dist') && data.hasOwnProperty('lat') && data.hasOwnProperty('lng')) {
+    dataArray.push("lat=" + data.lat);
+    dataArray.push("lng=" + data.lng);
+    dataArray.push("dist=" + data.dist);
+  }
+
+  return '?' + dataArray.join('&');
 }
 
-export async function sendFavouriteProject(token, id){
-  return await sendData('https://seedyfiuba-api-gateway.herokuapp.com/projects/' + id + '/favourites', token, {}).catch((error) => {throw error});
+export async function getProjectsAdmin(token, data) {
+  const query = process.env.REACT_APP_ADMIN_PROJECTS_URL + querySearchString(data);
+  return await getData(query, token).catch((error) => {throw error});
 }
 
-export async function getFavouriteProjects(token){
-  return await getData('https://seedyfiuba-api-gateway.herokuapp.com/favourites/mine', token, {}).catch((error) => {throw error});
+export async function getProjectAdminByID(token, id) {
+  const query = process.env.REACT_APP_PROJECT_ID_URL + id;
+  return await getData(query, token).catch((error) => {throw error});
 }
 
-export async function sendViewApply(token){
-  return await sendData('https://seedyfiuba-api-gateway.herokuapp.com/viewers', token, {}).catch((error) => {throw error});
-}
-
-export async function sendViewProject(token, id){
-  return await sendData('https://seedyfiuba-api-gateway.herokuapp.com/projects/' + id + '/review', token, {}).catch((error) => {throw error});
-}
-
-export async function getViewProjects(token){
-  return await getData('https://seedyfiuba-api-gateway.herokuapp.com/viewers/mine', token, {}).catch((error) => {throw error});
-}

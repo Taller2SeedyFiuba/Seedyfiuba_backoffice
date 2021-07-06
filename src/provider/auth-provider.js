@@ -12,34 +12,33 @@ export function init(){
   }
 };
 
-export function establishObserver(history){
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      console.log('Se ha conectado');
-      user.getIdToken(true).then((token) => {
-        app.loginUser(token);
-            Client.getUserData(token).then((resp) => {
-              app.loginRegisteredUSer(resp.id);
-              // history.push(app.routes().users);
-          }).catch((error) => {
-            if(Math.floor(error / 100) === 4){
-              app.loginRegisteredUSer("");
-              history.push({
-                pathname: app.routes().signupdata, 
-                state: {email: user.email}
-              });
-            } else {
-              console.log(error);
-            }
-          })
-      });
-    } else {
-      app.signOutUser();
-      // history.push(app.routes().login);
-      console.log('Se ha desconectado');
-    }
-  });
-};
+// export function establishObserver(){
+//   firebase.auth().onAuthStateChanged(function(user) {
+//     if (user) {
+//       console.log('Se ha conectado');
+//       user.getIdToken(true).then((token) => {
+//         app.loginUser(token);
+//         app.setEmail(user.email);
+//             Client.getUserData(token).then((resp) => {
+//               app.loginRegisteredUSer(resp.id);
+//           }).catch((error) => {
+//             if(Math.floor(error / 100) === 4){
+//               app.loginRegisteredUSer("");
+//               // history.push({
+//               //   pathname: app.routes().signupdata, 
+//               //   state: {email: user.email}
+//               // });
+//             } else {
+//               console.log(error);
+//             }
+//           })
+//       });
+//     } else {
+//       app.signOutUser();
+//       console.log('Se ha desconectado');
+//     }
+//   });
+// };
 
 export function createUserWithMailAndPassword(email, password){
   return firebase.auth().createUserWithEmailAndPassword(email, password);

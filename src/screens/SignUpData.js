@@ -41,11 +41,6 @@ export function SignUpData() {
   const [birthDate, setBirthDate] = React.useState('');
   const history = useHistory();
 
-  React.useEffect(() => {
-    Auth.init();
-    Auth.establishObserver(history);
-  }, [])
-
   function _setFirstName(event) {  // CHEQUEAR O CAMBIAR
     setFirstName(event.target.value);
   }

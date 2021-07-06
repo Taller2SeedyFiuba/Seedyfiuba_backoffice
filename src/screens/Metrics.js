@@ -111,11 +111,6 @@ export function Metrics() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const history = useHistory();
-
-  React.useEffect(() => {
-    Auth.init();
-    Auth.establishObserver(history);
-  }, [])
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -144,25 +139,17 @@ export function Metrics() {
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
             <MenuIcon />
-          </IconButton>
+            </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            Métricas
           </Typography>
           <Button
-                // type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                onClick={signOut}
+              variant="contained"
+              className={classes.submit}
+              onClick={signOut}
             >
-                SALIR
-            </Button>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+              CERRAR SESIÓN
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer

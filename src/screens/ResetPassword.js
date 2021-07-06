@@ -38,11 +38,6 @@ export function ResetPassword() {
     const [email, setEmail] = React.useState('');
     const history = useHistory();
 
-    React.useEffect(() => {
-        Auth.init();
-        Auth.establishObserver(history);
-    }, [])
-
     function _setEmail(event) {  // CHEQUEAR O CAMBIAR
         setEmail(event.target.value);
     }

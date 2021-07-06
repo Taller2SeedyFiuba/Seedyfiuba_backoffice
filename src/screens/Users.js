@@ -5,26 +5,21 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import {useHistory} from "react-router-dom";
 import ListItems from '../components/ListItems';
-import Chart from '../components/Chart';
-import Deposits from '../components/Deposits';
-import Orders from '../components/Orders';
-import * as Auth from '../provider/auth-provider'
+import UsersList from '../components/UsersList';
 import { app } from '../app/app';
+import * as Auth from '../provider/auth-provider'
+import * as Client from '../provider/client-provider'
 
 const drawerWidth = 240;
 
@@ -108,14 +103,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Users() {
+  const limit = 10;
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [users, setUsers] = React.useState('');
+  const [page, setPage] = React.useState(1);
   const history = useHistory();
-
-  React.useEffect(() => {
-    Auth.init();
-    Auth.establishObserver(history);
-  }, [])
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,13 +116,27 @@ export function Users() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  function returnNotAble() {
+    return page <= 1;
+  };
+
+  function increaseNotAble() {
+    return users.length < limit;
+  };
 
   function signOut() {
     Auth.signOut();
     app.signOutUser();  
     history.push(app.routes().login);
   }
+
+  React.useEffect(() => {
+    console.log(app.getToken());
+    Client.getUsersAdmin(app.getToken(), limit, page).then(response => {
+      setUsers(response);
+    });
+  }, [page])
 
   return (
     <div className={classes.root}>
@@ -146,23 +153,15 @@ export function Users() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            Usuarios
           </Typography>
           <Button
-                // type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                onClick={signOut}
+              variant="contained"
+              className={classes.submit}
+              onClick={signOut}
             >
-                SALIR
-            </Button>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+              CERRAR SESIÓN
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -183,23 +182,15 @@ export function Users() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
+          <Grid container >
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Orders />
+                <UsersList data={users} />
+                <div style={{flexDirection:'row', alignSelf:'center', marginTop: 15}}>
+                  <Button disabled={returnNotAble()} onClick={() => setPage(page-1)}>{'<<'}</Button>
+                  {page}
+                  <Button disabled={increaseNotAble()} onClick={() => setPage(page+1)}>{'>>'}</Button>
+                </div>
               </Paper>
             </Grid>
           </Grid>
