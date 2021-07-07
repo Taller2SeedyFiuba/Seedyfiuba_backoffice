@@ -113,6 +113,7 @@ export function Users() {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+  
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -132,7 +133,6 @@ export function Users() {
   }
 
   React.useEffect(() => {
-    console.log(app.getToken());
     Client.getUsersAdmin(app.getToken(), limit, page).then(response => {
       setUsers(response);
     });

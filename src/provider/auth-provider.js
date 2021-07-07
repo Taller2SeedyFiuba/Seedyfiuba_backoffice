@@ -7,7 +7,7 @@ import {app} from '../app/app'
 export function init(){
   if (!firebase.apps.length) {
     return firebase.initializeApp(JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG));
-  }else {
+  } else {
     return firebase.app();
   }
 };

@@ -36,6 +36,7 @@ export default function UsersList(props) {
             <TableCell>Email</TableCell>
             <TableCell>Fecha de Ingreso</TableCell>
             <TableCell>Fecha de Nacimiento</TableCell>
+            <TableCell>ID</TableCell>
           </TableRow>
         </TableHead>
         {users ? 
@@ -47,6 +48,7 @@ export default function UsersList(props) {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.signindate}</TableCell>
                 <TableCell>{user.birthdate}</TableCell>
+                <TableCell>{user.id}</TableCell>
               </TableRow>
             ))}
           </TableBody>

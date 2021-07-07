@@ -5,25 +5,21 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import {useHistory} from "react-router-dom";
 import ListItems from '../components/ListItems';
-import Chart from '../components/Chart';
-import Deposits from '../components/Deposits';
-import Orders from '../components/Orders';
+import ProjectsList from '../components/ProjectsList';
 import * as Auth from '../provider/auth-provider'
+import * as Client from '../provider/client-provider'
 import { app } from '../app/app';
 
 const drawerWidth = 240;
@@ -107,91 +103,203 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const raw_categories = ['arte', 'comida', 'danza', 'diseño', 'fotografía', 
+'legal', 'manualidades', 'música', 'periodismo', 'publicaciones', 'refugio', 
+'software', 'tecnología', 'transporte'];
+
+const categories = raw_categories.map((element) => {
+    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
+})
+
+const raw_stages = ['en curso', 'cancelado', 'completado']
+
+const stages = raw_stages.map((element) =>{
+    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
+})
+
 export function Projects() {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const history = useHistory();
-  
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
+    const [projects, setProjects] = React.useState('');
+    const limit = 10;
+    const [page, setPage] = React.useState(1);
+    const [tags, setTags] = React.useState('');
+    const [type, setType] = React.useState('');
+    const [stage, setStage] = React.useState('');
+    const [location, setLocation] = React.useState('');
+    const [dist, setDist] = React.useState('');
+    const [lat, setLat] = React.useState('');
+    const [lng, setLng] = React.useState('');
+    const history = useHistory();
+    
+    function _setTags(event) {  // CHEQUEAR O CAMBIAR
+        setTags(event.target.value);
+    }
+    
+    function _setType(event) {  // CHEQUEAR O CAMBIAR
+        setType(event.target.value);
+    }
+    
+    function _setStage(event) {  // CHEQUEAR O CAMBIAR
+        setStage(event.target.value);
+    }
 
-  function signOut() {
-    Auth.signOut();
-    app.signOutUser();  
-    history.push(app.routes().login);
-  }
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
+    
+    function searchProjects() {
+        let query = {};
+
+        if (limit) query.limit = limit;
+        if (page) query.page = page;
+        if (stage) query.stage = stage;
+        if (type) query.type = type;
+        if (tags) query.tags = tags.split(' ');
+
+        console.log(query);
+
+        Client.getProjectsAdmin(app.getToken(), query).then(response => {
+            setProjects(response);
+        });
+    }
+
+    function returnNotAble() {
+        return page <= 1;
+    };
+
+    function increaseNotAble() {
+        return projects.length < limit;
+    };
+
+    function signOut() {
+        Auth.signOut();
+        app.signOutUser();  
+        history.push(app.routes().login);
+    }
+
+    return (
+        <div className={classes.root}>
+          <CssBaseline />
+          <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <Toolbar className={classes.toolbar}>
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                Proyectos
+              </Typography>
+              <Button
+                  variant="contained"
+                  className={classes.submit}
+                  onClick={signOut}
+                >
+                  CERRAR SESIÓN
+              </Button>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+            }}
+            open={open}
           >
-            <MenuIcon />
-            </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Proyectos
-          </Typography>
-          <Button
-              variant="contained"
-              className={classes.submit}
-              onClick={signOut}
-            >
-              CERRAR SESIÓN
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
+            <div className={classes.toolbarIcon}>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </div>
+            <Divider />
+            <ListItems />
+          </Drawer>
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <Container maxWidth="lg" className={classes.container}>
+              <Grid container >
+                <Grid item xs={12}>
+                  <Paper className={classes.paper}>
+                  <form className={classes.form} noValidate>
+                      <TextField
+                          variant="outlined"
+                          margin="normal"
+                          label="Etiquetas"
+                          type="text"
+                          required
+                          fullWidth
+                          autoFocus
+                          value={tags}
+                          onChange={_setTags}
+                      />
+                      <TextField
+                          variant="outlined"
+                          margin="normal"
+                          label="Categoría"
+                        //   type="text"
+                          select
+                          required
+                          fullWidth
+                          autoFocus
+                          value={type}
+                          onChange={_setType}
+                      >
+                          {categories.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                {option.label}
+                                </option>
+                            ))}
+                        </TextField>
+                      <TextField
+                          variant="outlined"
+                          margin="normal"
+                          label="Etapa"
+                          type="text"
+                          select
+                          required
+                          fullWidth
+                          autoFocus
+                          value={stage}
+                          onChange={_setStage}
+                      >
+                            {stages.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                {option.label}
+                                </option>
+                            ))}
+                        </TextField>
+                    <Button
+                        // type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                        onClick={searchProjects}
+                        style={{marginBottom: 30, marginTop: 15}}
+                    >
+                        BUSCAR
+                    </Button>
+                    </form>
+                    <ProjectsList data={projects} />
+                    <div style={{flexDirection:'row', alignSelf:'center', marginTop: 15}}>
+                      <Button disabled={returnNotAble()} onClick={() => {setPage(page-1); searchProjects();}}>{'<<'}</Button>
+                      {page}
+                      <Button disabled={increaseNotAble()} onClick={() => {setPage(page+1); searchProjects();}}>{'>>'}</Button>
+                    </div>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Container>
+          </main>
         </div>
-        <Divider />
-        <ListItems />
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </main>
-    </div>
-  );
+    );
 }

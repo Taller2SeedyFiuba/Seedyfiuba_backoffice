@@ -55,7 +55,7 @@ export function SignUp() {
 
   function checkMailAndPassword() {
     return ((email.includes('@')) && (email.length() > 5) && 
-      (password.length() > 5) && (password == confPassword));
+      (password.length() > 5) && (password === confPassword));
   }
 
   async function trySignUp() {  // CHEQUEAR O CAMBIAR
