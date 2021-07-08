@@ -103,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const raw_categories = ['arte', 'comida', 'danza', 'diseño', 'fotografía', 
+const raw_categories = ['', 'arte', 'comida', 'danza', 'diseño', 'fotografía', 
 'legal', 'manualidades', 'música', 'periodismo', 'publicaciones', 'refugio', 
 'software', 'tecnología', 'transporte'];
 
@@ -111,7 +111,7 @@ const categories = raw_categories.map((element) => {
     return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
 })
 
-const raw_stages = ['en curso', 'cancelado', 'completado']
+const raw_stages = ['', 'en curso', 'cancelado', 'completado']
 
 const stages = raw_stages.map((element) =>{
     return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
