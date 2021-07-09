@@ -123,6 +123,7 @@ export function Projects() {
     const [projects, setProjects] = React.useState('');
     const limit = 10;
     const [page, setPage] = React.useState(1);
+    const [ownerid, setOwnerid] = React.useState('');
     const [tags, setTags] = React.useState('');
     const [type, setType] = React.useState('');
     const [stage, setStage] = React.useState('');
@@ -132,29 +133,34 @@ export function Projects() {
     const [lng, setLng] = React.useState('');
     const history = useHistory();
     
+    function _setOwnerid(event) {  // CHEQUEAR O CAMBIAR
+      setOwnerid(event.target.value);
+    }
+    
     function _setTags(event) {  // CHEQUEAR O CAMBIAR
-        setTags(event.target.value);
+      setTags(event.target.value);
     }
     
     function _setType(event) {  // CHEQUEAR O CAMBIAR
-        setType(event.target.value);
+      setType(event.target.value);
     }
     
     function _setStage(event) {  // CHEQUEAR O CAMBIAR
-        setStage(event.target.value);
+      setStage(event.target.value);
     }
 
     const handleDrawerOpen = () => {
-        setOpen(true);
+      setOpen(true);
     };
 
     const handleDrawerClose = () => {
-        setOpen(false);
+      setOpen(false);
     };
     
     function searchProjects() {
         let query = {};
 
+        if (ownerid) query.ownerid = ownerid;
         if (limit) query.limit = limit;
         if (page) query.page = page;
         if (stage) query.stage = stage;
@@ -230,6 +236,17 @@ export function Projects() {
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
                   <form className={classes.form} noValidate>
+                      <TextField
+                          variant="outlined"
+                          margin="normal"
+                          label="ID Usuario"
+                          type="text"
+                          required
+                          fullWidth
+                          autoFocus
+                          value={ownerid}
+                          onChange={_setOwnerid}
+                      />
                       <TextField
                           variant="outlined"
                           margin="normal"
