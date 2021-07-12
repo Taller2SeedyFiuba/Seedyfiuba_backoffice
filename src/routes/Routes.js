@@ -6,6 +6,7 @@ import {DataRoute} from "./DataRoute"
 import {app} from "../app/app"
 import {Login} from "../screens/Login"
 import {Users} from "../screens/Users"
+import {UserView} from "../screens/UserView"
 import {SignUp} from "../screens/SignUp"
 import {SignUpData} from "../screens/SignUpData"
 import {ResetPassword} from "../screens/ResetPassword"
@@ -26,6 +27,7 @@ export default function App() {
             <LoginRoute exact path={app.routes().resetpassword} component={ResetPassword}/>
             <DataRoute exact path={app.routes().signupdata} component={SignUpData}/>
             <PrivateRoute exact path={app.routes().users} component={Users}/>
+            <PrivateRoute exact path={app.routes().userid} component={UserView}/>
             <PrivateRoute exact path={app.routes().projects} component={Projects}/>
             <PrivateRoute exact path={app.routes().servers} component={Servers}/>
             <PrivateRoute exact path={app.routes().metrics} component={Metrics}/>

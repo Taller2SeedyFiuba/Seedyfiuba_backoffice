@@ -11,6 +11,7 @@ class App {
             signup: '/signup',
             signupdata: '/signupdata',
             users: '/users',
+            userid: '/users/:id',
             projects: '/projects',
             servers: '/servers',
             metrics: '/metrics'

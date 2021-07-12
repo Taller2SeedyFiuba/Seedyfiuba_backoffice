@@ -4,10 +4,18 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
 import Title from './Title';
+import {useHistory} from "react-router-dom";
+import {app} from '../app/app'
 
 export default function UsersList(props) {
   const [users, setUsers] = React.useState();
+  const history = useHistory();
+
+  const viewUser = (id) => {
+    history.push(app.routes().users + '/' + id);
+  }
 
   React.useEffect(() => {
     if (props.data) {
@@ -16,9 +24,7 @@ export default function UsersList(props) {
           id: x.id, 
           firstname: x.firstname, 
           lastname: x.lastname, 
-          birthdate: x.birthdate, 
-          email: x.email, 
-          signindate: x.signindate
+          email: x.email,
         };
       });
       setUsers(users);
@@ -34,9 +40,8 @@ export default function UsersList(props) {
             <TableCell>Nombre</TableCell>
             <TableCell>Apellido</TableCell>
             <TableCell>Email</TableCell>
-            <TableCell>Fecha de Ingreso</TableCell>
-            <TableCell>Fecha de Nacimiento</TableCell>
             <TableCell>ID</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         {users ? 
@@ -46,9 +51,8 @@ export default function UsersList(props) {
                 <TableCell>{user.firstname}</TableCell>
                 <TableCell>{user.lastname}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.signindate}</TableCell>
-                <TableCell>{user.birthdate}</TableCell>
                 <TableCell>{user.id}</TableCell>
+                <TableCell><Button onClick={() => viewUser(user.id)}>...</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>

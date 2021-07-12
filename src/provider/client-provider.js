@@ -31,6 +31,23 @@ function getData(url, token){
   });
 };
 
+function patchData(url, token, data){
+  return fetch(url, {
+    method: 'PATCH',
+    //mode : 'no-cors',
+    body: JSON.stringify(data),
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    }
+  }).then((response) => {
+    if(response.ok){
+      return response.json().then((resp) => resp.data);
+    }else{
+      throw response.status;
+    }
+  });
+};
 
 // Users
 
@@ -54,10 +71,10 @@ export async function getUserAdminByID(token, id) {
   return await getData(query, token).catch((error) => {throw error});
 }
 
-// export async function promoteUserAdminByID(token, id) {
-//   const query = process.env.REACT_APP_ADMIN_USERS_ID_URL + id
-//   return await patchData(query, token).catch((error) => {throw error});
-// }
+export async function promoteUserAdminByID(token, id) {
+  const query = process.env.REACT_APP_ADMIN_USERS_ID_URL + id
+  return await patchData(query, token, {}).catch((error) => {throw error});
+}
 
 // Projects admin
 
