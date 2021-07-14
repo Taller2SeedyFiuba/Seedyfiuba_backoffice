@@ -31,11 +31,12 @@ function getData(url, token){
   });
 };
 
-function patchData(url, token, data){
+function patchData(url, token){
+  console.log(url);
+  console.log(token);
   return fetch(url, {
     method: 'PATCH',
     //mode : 'no-cors',
-    body: JSON.stringify(data),
     headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
@@ -73,7 +74,7 @@ export async function getUserAdminByID(token, id) {
 
 export async function promoteUserAdminByID(token, id) {
   const query = process.env.REACT_APP_ADMIN_USERS_ID_URL + id
-  return await patchData(query, token, {}).catch((error) => {throw error});
+  return await patchData(query, token).catch((error) => {throw error});
 }
 
 // Projects admin

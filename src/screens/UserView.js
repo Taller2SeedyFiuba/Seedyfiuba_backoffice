@@ -125,7 +125,7 @@ export function UserView() {
 
   const makeAdmin = () => {
     try {
-      Client.promoteUserAdminByID(user.id).then(() => setUser({...user, isadmin:true}));
+      Client.promoteUserAdminByID(app.getToken(), user.id).then(() => setUser({...user, isadmin:true}));
     } catch (error) {
       console.log(error); // CAMBIAR
     }
