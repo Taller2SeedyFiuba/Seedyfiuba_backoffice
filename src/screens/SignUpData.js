@@ -51,12 +51,11 @@ export function SignUpData() {
     setBirthDate(event.target.value);
   }
 
-  // CAMBIAR LO DE EMAIL Y PONER EMAIL EN APP, ACTUALIZAR EN AUTH EL EMAIL DE APP
-  // CAMBIAR PICKER DATE POR PICKER BUENO Y DAR VUELTA EL FORMATO DE LA FECHA
-
   function trySignUpData() {  // CHEQUEAR O CAMBIAR
+    let email = app.getEmail();
+
     const data = {
-      email : window.location.state.email,
+      email : email,
       firstname : firstName,
       lastname : lastName, 
       birthdate : birthDate

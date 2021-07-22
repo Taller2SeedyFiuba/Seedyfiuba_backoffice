@@ -54,8 +54,8 @@ export function SignUp() {
   }
 
   function checkMailAndPassword() {
-    return ((email.includes('@')) && (email.length() > 5) && 
-      (password.length() > 5) && (password === confPassword));
+    return ((email.includes('@')) && (email.length > 5) && 
+      (password.length > 5) && (password === confPassword));
   }
 
   async function trySignUp() {  // CHEQUEAR O CAMBIAR
@@ -64,6 +64,7 @@ export function SignUp() {
         await Auth.createUserWithMailAndPassword(email, password);
         let token = await Auth.getIdToken(true);
         app.loginUser(token);
+        app.setEmail(email);
         Client.getUserData(token).then((resp) => {
             app.loginRegisteredUSer(resp.id);
             history.push(app.routes().users);

@@ -27,11 +27,20 @@ class App {
         localStorage.setItem("id", id);
     }
 
-    signOutUser() {
-        localStorage.setItem("token", "");
-        localStorage.setItem("id", "");
+    setEmail(email) {
+        localStorage.setItem("email", email);
     }
-
+    
+    signOutUser() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("id");
+        localStorage.removeItem("email");
+    }
+    
+    getEmail() {
+        return localStorage.getItem("email");
+    }
+    
     getToken() {
         return localStorage.getItem("token");
     }
