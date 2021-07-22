@@ -121,7 +121,7 @@ export async function getProjectsAdmin(token, data) {
 }
 
 export async function getProjectAdminByID(token, id) {
-  const query = process.env.REACT_APP_PROJECT_ID_URL + id;
+  const query = process.env.REACT_APP_ADMIN_PROJECTS_ID_URL + id;
   return await getData(query, token).catch((error) => {throw error});
 }
 

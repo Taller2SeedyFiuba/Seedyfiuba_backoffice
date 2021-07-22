@@ -5,26 +5,24 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import ListItems from '../components/ListItems';
-import Chart from '../components/Chart';
-import Deposits from '../components/Deposits';
-import Orders from '../components/Orders';
-import * as Auth from '../provider/auth-provider'
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import { app } from '../app/app';
+import * as Auth from '../provider/auth-provider'
+import * as Client from '../provider/client-provider'
 
 const drawerWidth = 240;
 
@@ -105,26 +103,45 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
+  media: {
+    width: 100,
+    height: 100,
+    margin: 15,
+  },
+  imgContainer: {
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:'flex-start',
+      flexWrap:'wrap',
+  }
 }));
 
-export function Servers() {
+export function ProjectView() {
+  let { id } = useParams();
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [project, setProject] = React.useState('');
   const history = useHistory();
   
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+  
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   function signOut() {
     Auth.signOut();
-    app.signOutUser();  
+    app.signOutUser();
     history.push(app.routes().login);
   }
+
+  React.useEffect(() => {
+    Client.getProjectAdminByID(app.getToken(), id).then(response => {
+      setProject(response);
+    });
+  }, [])
 
   return (
     <div className={classes.root}>
@@ -139,9 +156,9 @@ export function Servers() {
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
             <MenuIcon />
-            </IconButton>
+          </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Servidores
+            Proyectos
           </Typography>
           <Button
               variant="contained"
@@ -169,28 +186,63 @@ export function Servers() {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
+        {project ? 
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
+          <Grid container >
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Orders />
+                <Card className={classes.root}> 
+                  <CardContent>
+                    <div className={classes.imgContainer}>
+                    {project.multimedia.map((img) => {
+                        return(
+                            <CardMedia
+                              component="img"
+                              image={img}
+                              className={classes.media}
+                            />
+                        )
+                    })}
+                    </div>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {project.firstname} {project.lastname}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      ID: {project.id}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      ID del Usuario: {project.ownerid}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Titulo: {project.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Categoría: {project.type}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Etapa: {project.state}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Monto recaudado: {project.fundedamount} / {project.totalamount}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Fecha de creación: {project.creationdate}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Ubicación: {project.location.description}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      Tags: {project.tags.map((tag) => {return tag + " "})}
+                    </Typography>
+                  </CardContent>
+                </Card>
               </Paper>
             </Grid>
           </Grid>
         </Container>
+        : 
+        <></>
+        }
       </main>
     </div>
   );

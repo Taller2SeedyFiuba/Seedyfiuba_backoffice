@@ -1,7 +1,9 @@
 import React from 'react';
+import TextField from '@material-ui/core/TextField';
 import { useTheme } from '@material-ui/core/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from './Title';
+import { Grid } from '@material-ui/core';
 
 // Generate Sales Data
 function createData(time, amount) {
@@ -20,12 +22,45 @@ const data = [
   createData('24:00', undefined),
 ];
 
+const raw_times = ['hoy', 'mes', 'año'];
+
+const times = raw_times.map((element) => {
+    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
+})
+
 export default function Chart() {
   const theme = useTheme();
 
   return (
     <React.Fragment>
-      <Title>Today</Title>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        >
+        <Title>Today</Title>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          label="Categoría"
+        //   type="text"
+          select
+          required
+          fullWidth
+          autoFocus
+          // value={type}
+          // onChange={_setType}
+          size='small'
+          style={{marginLeft:20, width:'50%'}}
+        >
+          {times.map((option) => (
+            <option key={option.value} value={option.value}>
+            {option.label}
+            </option>
+          ))}
+        </TextField>
+      </Grid>
       <ResponsiveContainer>
         <LineChart
           data={data}

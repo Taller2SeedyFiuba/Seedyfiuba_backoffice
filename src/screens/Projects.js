@@ -119,6 +119,7 @@ const stages = raw_stages.map((element) =>{
 
 export function Projects() {
     const classes = useStyles();
+    const [onRequest, setOnRequest] = React.useState(false);
     const [open, setOpen] = React.useState(true);
     const [projects, setProjects] = React.useState('');
     const limit = 10;
@@ -158,20 +159,23 @@ export function Projects() {
     };
     
     function searchProjects() {
-        let query = {};
+      setOnRequest(true);
 
-        if (ownerid) query.ownerid = ownerid;
-        if (limit) query.limit = limit;
-        if (page) query.page = page;
-        if (stage) query.stage = stage;
-        if (type) query.type = type;
-        if (tags) query.tags = tags.split(' ');
+      let query = {};
 
-        console.log(query);
+      if (ownerid) query.ownerid = ownerid;
+      if (limit) query.limit = limit;
+      if (page) query.page = page;
+      if (stage) query.stage = stage;
+      if (type) query.type = type;
+      if (tags) query.tags = tags.split(' ');
 
-        Client.getProjectsAdmin(app.getToken(), query).then(response => {
-            setProjects(response);
-        });
+      console.log(query);
+
+      Client.getProjectsAdmin(app.getToken(), query).then(response => {
+          setProjects(response);
+          setOnRequest(false);
+      });
     }
 
     function returnNotAble() {
@@ -187,6 +191,10 @@ export function Projects() {
         app.signOutUser();  
         history.push(app.routes().login);
     }
+
+    React.useEffect(() => {
+      searchProjects();
+    },[page])
 
     return (
         <div className={classes.root}>
@@ -300,7 +308,13 @@ export function Projects() {
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                        onClick={searchProjects}
+                        onClick={() => {
+                          if (page !== 1) {
+                            setPage(1);
+                          } else {
+                            searchProjects();
+                          }
+                        }}
                         style={{marginBottom: 30, marginTop: 15}}
                     >
                         BUSCAR
@@ -308,9 +322,9 @@ export function Projects() {
                     </form>
                     <ProjectsList data={projects} />
                     <div style={{flexDirection:'row', alignSelf:'center', marginTop: 15}}>
-                      <Button disabled={returnNotAble()} onClick={() => {setPage(page-1); searchProjects();}}>{'<<'}</Button>
+                      <Button disabled={returnNotAble() || onRequest} onClick={() => setPage(page-1)}>{'<<'}</Button>
                       {page}
-                      <Button disabled={increaseNotAble()} onClick={() => {setPage(page+1); searchProjects();}}>{'>>'}</Button>
+                      <Button disabled={increaseNotAble() || onRequest} onClick={() => setPage(page+1)}>{'>>'}</Button>
                     </div>
                   </Paper>
                 </Grid>

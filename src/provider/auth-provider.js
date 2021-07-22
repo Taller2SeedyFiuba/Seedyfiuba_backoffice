@@ -1,8 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import 'firebase/storage';
-import * as Client from './client-provider.js';
-import {app} from '../app/app'
 
 export function init(){
   if (!firebase.apps.length) {
@@ -11,34 +9,6 @@ export function init(){
     return firebase.app();
   }
 };
-
-// export function establishObserver(){
-//   firebase.auth().onAuthStateChanged(function(user) {
-//     if (user) {
-//       console.log('Se ha conectado');
-//       user.getIdToken(true).then((token) => {
-//         app.loginUser(token);
-//         app.setEmail(user.email);
-//             Client.getUserData(token).then((resp) => {
-//               app.loginRegisteredUSer(resp.id);
-//           }).catch((error) => {
-//             if(Math.floor(error / 100) === 4){
-//               app.loginRegisteredUSer("");
-//               // history.push({
-//               //   pathname: app.routes().signupdata, 
-//               //   state: {email: user.email}
-//               // });
-//             } else {
-//               console.log(error);
-//             }
-//           })
-//       });
-//     } else {
-//       app.signOutUser();
-//       console.log('Se ha desconectado');
-//     }
-//   });
-// };
 
 export function createUserWithMailAndPassword(email, password){
   return firebase.auth().createUserWithEmailAndPassword(email, password);

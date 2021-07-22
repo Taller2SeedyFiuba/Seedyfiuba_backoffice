@@ -11,7 +11,7 @@ import {SignUp} from "../screens/SignUp"
 import {SignUpData} from "../screens/SignUpData"
 import {ResetPassword} from "../screens/ResetPassword"
 import {Projects} from "../screens/Projects"
-import {Servers} from "../screens/Servers"
+import {ProjectView} from "../screens/ProjectView"
 import {Metrics} from "../screens/Metrics"
 import  * as Auth from "../provider/auth-provider"
 
@@ -29,7 +29,7 @@ export default function App() {
             <PrivateRoute exact path={app.routes().users} component={Users}/>
             <PrivateRoute exact path={app.routes().userid} component={UserView}/>
             <PrivateRoute exact path={app.routes().projects} component={Projects}/>
-            <PrivateRoute exact path={app.routes().servers} component={Servers}/>
+            <PrivateRoute exact path={app.routes().projectid} component={ProjectView}/>
             <PrivateRoute exact path={app.routes().metrics} component={Metrics}/>
         </Router>
     );

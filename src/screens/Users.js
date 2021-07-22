@@ -105,6 +105,7 @@ const useStyles = makeStyles((theme) => ({
 export function Users() {
   const limit = 10;
   const classes = useStyles();
+  const [onRequest, setOnRequest] = React.useState(false);
   const [open, setOpen] = React.useState(true);
   const [users, setUsers] = React.useState('');
   const [page, setPage] = React.useState(1);
@@ -133,8 +134,10 @@ export function Users() {
   }
 
   React.useEffect(() => {
+    setOnRequest(true);
     Client.getUsersAdmin(app.getToken(), limit, page).then(response => {
       setUsers(response);
+      setOnRequest(false);
     });
   }, [page])
 
@@ -187,9 +190,9 @@ export function Users() {
               <Paper className={classes.paper}>
                 <UsersList data={users} />
                 <div style={{flexDirection:'row', alignSelf:'center', marginTop: 15}}>
-                  <Button disabled={returnNotAble()} onClick={() => setPage(page-1)}>{'<<'}</Button>
+                  <Button disabled={returnNotAble() || onRequest} onClick={() => setPage(page-1)}>{'<<'}</Button>
                   {page}
-                  <Button disabled={increaseNotAble()} onClick={() => setPage(page+1)}>{'>>'}</Button>
+                  <Button disabled={increaseNotAble() || onRequest} onClick={() => setPage(page+1)}>{'>>'}</Button>
                 </div>
               </Paper>
             </Grid>

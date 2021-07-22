@@ -16,12 +16,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {useHistory, useParams} from "react-router-dom";
 import ListItems from '../components/ListItems';
-import UsersList from '../components/UsersList';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import { app } from '../app/app';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
@@ -109,12 +105,11 @@ const useStyles = makeStyles((theme) => ({
 
 export function UserView() {
   let { id } = useParams();
-  const limit = 10;
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [user, setUser] = React.useState('');
   const history = useHistory();
-  
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };

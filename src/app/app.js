@@ -13,6 +13,7 @@ class App {
             users: '/users',
             userid: '/users/:id',
             projects: '/projects',
+            projectid: '/projects/:id',
             servers: '/servers',
             metrics: '/metrics'
         }
@@ -42,21 +43,6 @@ class App {
     thereIsRegisteredUser() {
         return localStorage.getItem("id");
     }
-
-    // _setUpApiClient() {
-    //     const requester = this._setUpRequester();
-    //     this._apiClient = new ApiClient(requester);
-    // }
-
-    // _setUpRequester() {
-    //     const usingFakeApi = getSetting("USING_FAKE_API");
-    //     if (usingFakeApi) {
-    //         return new FakeRequester();
-    //     }
-
-    //     const remoteApiUrl = getSetting("API_URL");
-    //     return new RemoteRequester(remoteApiUrl);
-    // }
 }
 
 export let app = new App();

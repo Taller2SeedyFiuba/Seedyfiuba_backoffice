@@ -6,7 +6,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import DnsOutlinedIcon from '@material-ui/icons/DnsOutlined';
 import { Link } from 'react-router-dom';
 import {app} from '../app/app'
 
@@ -24,12 +23,6 @@ export default function ListItems() {
           <AssignmentIcon />
         </ListItemIcon>
         <ListItemText primary="Proyectos" />
-      </ListItem>
-      <ListItem button component={Link} to={app.routes().servers} >
-        <ListItemIcon>
-          <DnsOutlinedIcon />
-        </ListItemIcon>
-        <ListItemText primary="Servidores" />
       </ListItem>
       <ListItem button component={Link} to={app.routes().metrics} >
         <ListItemIcon>
