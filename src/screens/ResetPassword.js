@@ -38,12 +38,15 @@ export function ResetPassword() {
     const [email, setEmail] = React.useState('');
     const history = useHistory();
 
-    function _setEmail(event) {  // CHEQUEAR O CAMBIAR
+    function _setEmail(event) {
         setEmail(event.target.value);
     }
 
-    function tryResetPassword() {  // CHEQUEAR O CAMBIAR
-        alert("Por implementar");
+    function tryResetPassword() {
+        Auth.sendPasswordResetEmail(email).then( function() {
+            alert(`Mensaje de reseteo de contraseña enviado a: ${email}`);
+            history.push(app.routes().login);
+        }).catch(error => alert(Auth.errorMessageTranslation(error)));
     }
 
     return (

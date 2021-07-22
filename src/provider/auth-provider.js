@@ -10,28 +10,24 @@ export function init(){
   }
 };
 
-export function createUserWithMailAndPassword(email, password){
+export async function createUserWithMailAndPassword(email, password){
   return firebase.auth().createUserWithEmailAndPassword(email, password);
 };
 
-export function signInWithMailAndPassword(email, password){
+export async function signInWithMailAndPassword(email, password){
   return firebase.auth().signInWithEmailAndPassword(email, password);
 };
 
-export function getIdToken(forceRefresh){
+export async function getIdToken(forceRefresh){
   return firebase.auth().currentUser.getIdToken(forceRefresh);
 };
 
-export function signOut(){
-  firebase.auth().signOut().then(() => {
-    // Sign-out successful.
-  }).catch((error) => {
-    // An error happened.
-  });
+export async function signOut(){
+  return firebase.auth().signOut()
 };
 
-export function sendPasswordResetEmail(email){
-  firebase.auth().sendPasswordResetEmail(email);
+export async function sendPasswordResetEmail(email){
+  return firebase.auth().sendPasswordResetEmail(email);
 };
 
 export function errorMessageTranslation(error){
