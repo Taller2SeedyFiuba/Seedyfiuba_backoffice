@@ -14,11 +14,13 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import ListItems from '../components/ListItems';
-import Chart from '../components/Chart';
-import Deposits from '../components/Deposits';
+import TimeCharts from '../components/TimeCharts';
+import ProjectCharts from '../components/ProjectCharts';
+import UserCharts from '../components/UserCharts';
 import * as Auth from '../provider/auth-provider'
+import * as Client from '../provider/client-provider'
 import { app } from '../app/app';
 
 const drawerWidth = 240;
@@ -107,20 +109,124 @@ const useStyles = makeStyles((theme) => ({
 export function Metrics() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [historicMetrics, setHistoricMetrics] = React.useState(null);
+  const [presentMetrics, setPresentMetrics] = React.useState(null);
+  const [userMetrics, setUserMetrics] = React.useState(null);
+  const [projectMetrics, setProjectMetrics] = React.useState(null);
+  const [intervalUsers, setIntervalUsers] = React.useState("hour");
+  const [intervalProjects, setIntervalProjects] = React.useState("hour");
   const history = useHistory();
   
+  React.useEffect(() => {
+    Client.getAllMetricsAdmin(app.getToken())
+      .then(response => {
+        setHistoricMetrics(response);
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    let date = new Date();
+    let d1 = String(date.getDate()).padStart(2, '0');
+    let m1 = String(date.getMonth() + 1).padStart(2, '0'); 
+    let y1 = date.getFullYear();
+
+    date.setDate(date.getDate() + 1)
+    let d2 = String(date.getDate()).padStart(2, '0');
+    let m2 = String(date.getMonth() + 1).padStart(2, '0'); 
+    let y2 = date.getFullYear();
+    
+    Client.getMetricsAdmin(app.getToken(), "second", `${y1}-${m1}-${d1}`, `${y2}-${m2}-${d2}`)
+      .then(response => {
+        setPresentMetrics(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },[]);
+
+  React.useEffect(() => {
+    let date = new Date();
+    let date2 = new Date();
+    date2.setDate(date2.getDate() + 1);
+
+    if (intervalUsers === "day") {
+      date.setMonth(date.getMonth() - 1);
+    } else if (intervalUsers === "month") {
+      date.setFullYear(date.getFullYear() - 1);
+    }
+
+    let d1 = String(date.getDate()).padStart(2, '0');
+    let m1 = String(date.getMonth() + 1).padStart(2, '0'); 
+    let y1 = date.getFullYear();
+    let d2 = String(date2.getDate()).padStart(2, '0');
+    let m2 = String(date2.getMonth() + 1).padStart(2, '0'); 
+    let y2 = date2.getFullYear();
+
+    Client.getMetricsAdmin(app.getToken(), intervalUsers, `${y1}-${m1}-${d1}`, `${y2}-${m2}-${d2}`)
+      .then(response => {
+        console.log(response);
+        setUserMetrics(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },[intervalUsers]);
+
+  React.useEffect(() => {
+    let date = new Date();
+    let date2 = new Date();
+    date2.setDate(date2.getDate() + 1);
+
+    if (intervalProjects === "day") {
+      date.setMonth(date.getMonth() - 1);
+    } else if (intervalProjects === "month") {
+      date.setFullYear(date.getFullYear() - 1);
+    }
+
+    let d1 = String(date.getDate()).padStart(2, '0');
+    let m1 = String(date.getMonth() + 1).padStart(2, '0'); 
+    let y1 = date.getFullYear();
+    let d2 = String(date2.getDate()).padStart(2, '0');
+    let m2 = String(date2.getMonth() + 1).padStart(2, '0'); 
+    let y2 = date2.getFullYear();
+    
+    Client.getMetricsAdmin(app.getToken(), intervalProjects, `${y1}-${m1}-${d1}`, `${y2}-${m2}-${d2}`)
+    .then(response => {
+      console.log(response);
+      setProjectMetrics(response);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  },[intervalProjects]);
+
+  function _setIntervalUsers(value) {
+    setIntervalUsers(value);
+    console.log(value);
+  } 
+
+  function _setIntervalProjects(value) {
+    setIntervalProjects(value);
+    console.log(value);
+  } 
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   function signOut() {
     Auth.signOut();
     app.signOutUser();  
     history.push(app.routes().login);
+  }
+
+  const allMetrics = () => {
+    return historicMetrics && presentMetrics && userMetrics && projectMetrics;
   }
 
   return (
@@ -164,18 +270,31 @@ export function Metrics() {
         <Divider />
         <ListItems />
       </Drawer>
+      {allMetrics() ? 
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
+          <Grid container>              
+            <TimeCharts 
+              userMetrics={userMetrics}
+              projectMetrics={projectMetrics}
+              intervalUsers={intervalUsers}
+              setIntervalUsers={_setIntervalUsers}
+              intervalProjects={intervalProjects}
+              setIntervalProjects={_setIntervalProjects}
+            />
+            <ProjectCharts 
+              historicMetrics={historicMetrics}
+            />
+            <UserCharts 
+              historicMetrics={historicMetrics}
+              presentMetrics={presentMetrics}
+            />
           </Grid>
         </Container>
       </main>
+      :
+      <></>}
     </div>
   );
 }

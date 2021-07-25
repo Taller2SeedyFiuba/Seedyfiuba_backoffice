@@ -40,14 +40,6 @@ export function Login() {
     const [password, setPassword] = React.useState('');
     const history = useHistory();
 
-    function _setEmail(event) {  // CHEQUEAR O CAMBIAR
-        setEmail(event.target.value);
-    }
-
-    function _setPassword(event) {  // CHEQUEAR O CAMBIAR
-        setPassword(event.target.value);
-    }
-
     async function trySignIn() {  // CHEQUEAR O CAMBIAR
         try {
             await Auth.signInWithMailAndPassword(email, password);
@@ -92,7 +84,7 @@ export function Login() {
                 fullWidth
                 autoFocus
                 value={email}
-                onChange={_setEmail}
+                onChange={event => setEmail(event.target.value)}
             />
             <TextField
                 variant="outlined"
@@ -102,7 +94,7 @@ export function Login() {
                 required
                 fullWidth
                 value={password}
-                onChange={_setPassword}
+                onChange={event => setPassword(event.target.value)}
             />
             <Button
                 // type="submit"

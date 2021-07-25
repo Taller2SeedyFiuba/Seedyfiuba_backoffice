@@ -22,13 +22,13 @@ const data = [
   createData('24:00', undefined),
 ];
 
-const raw_times = ['hoy', 'mes', 'año'];
+const times = [
+  { label: 'hour', value: 'Día'},
+  { label: 'day', value: 'Mes'},
+  { label: 'month', value: 'Año'},
+]
 
-const times = raw_times.map((element) => {
-    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
-})
-
-export default function Chart() {
+export default function Chart(props) {
   const theme = useTheme();
 
   return (
@@ -39,12 +39,11 @@ export default function Chart() {
         justifyContent="center"
         alignItems="center"
         >
-        <Title>Today</Title>
+        <Title>{props.title}</Title>
         <TextField
           variant="outlined"
           margin="normal"
           label="Categoría"
-        //   type="text"
           select
           required
           fullWidth

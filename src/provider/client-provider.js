@@ -17,6 +17,7 @@ function sendData(url, token, data){
 };
 
 function getData(url, token){
+  console.log(url);
   return fetch(url, {
     method: 'GET',
     headers: {
@@ -32,8 +33,6 @@ function getData(url, token){
 };
 
 function patchData(url, token){
-  console.log(url);
-  console.log(token);
   return fetch(url, {
     method: 'PATCH',
     //mode : 'no-cors',
@@ -125,3 +124,15 @@ export async function getProjectAdminByID(token, id) {
   return await getData(query, token).catch((error) => {throw error});
 }
 
+// Metrics
+
+export async function getAllMetricsAdmin(token) {
+  const query = process.env.REACT_APP_ADMIN_METRICS_URL
+  return await getData(query, token).catch((error) => {throw error});
+}
+
+export async function getMetricsAdmin(token, timeinterval, fromdate, todate) {
+  const data = `?timeinterval=${timeinterval}&fromdate=${fromdate}&todate=${todate}`
+  const query = process.env.REACT_APP_ADMIN_METRICS_URL + data
+  return await getData(query, token).catch((error) => {throw error});
+}
