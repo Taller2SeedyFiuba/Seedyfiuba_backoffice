@@ -37,6 +37,7 @@ export function SignUpData() {
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [birthDate, setBirthDate] = React.useState('');
+  const [onRequest, setOnRequest] = React.useState(false);
   const history = useHistory();
 
   function _setFirstName(event) {  // CHEQUEAR O CAMBIAR
@@ -51,7 +52,8 @@ export function SignUpData() {
     setBirthDate(event.target.value);
   }
 
-  function trySignUpData() {  // CHEQUEAR O CAMBIAR
+  function trySignUpData() {
+    setOnRequest(true);
     let email = app.getEmail();
 
     const data = {
@@ -60,9 +62,13 @@ export function SignUpData() {
       lastname : lastName, 
       birthdate : birthDate
     };
-    Client.sendUserData(app.getToken(), data).then((resp) => {
+    Client.sendUserData(app.getToken(), data).then(resp => {
       app.loginRegisteredUSer(resp.id);
       history.push(app.routes().users);
+      setOnRequest(false);
+    }).catch(error => {
+      console.log(error);
+      setOnRequest(false);
     })
   }
 
@@ -119,7 +125,7 @@ export function SignUpData() {
             </Grid>
           </Grid>
           <Button
-            // type="submit"
+            disabled={onRequest}
             fullWidth
             variant="contained"
             color="primary"

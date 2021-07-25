@@ -1,6 +1,17 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import 'firebase/storage';
+import { app } from "../app/app";
+
+export async function establishObserver() {
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      user.getIdToken().then(token => app.loginUser(token));
+    } else {
+      app.signOutUser();
+    }
+  });
+}
 
 export function init(){
   if (!firebase.apps.length) {

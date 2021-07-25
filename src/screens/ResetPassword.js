@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 export function ResetPassword() {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
+    const [onRequest, setOnRequest] = React.useState(false);
     const history = useHistory();
 
     function _setEmail(event) {
@@ -43,10 +44,16 @@ export function ResetPassword() {
     }
 
     function tryResetPassword() {
+        setOnRequest(true);
+
         Auth.sendPasswordResetEmail(email).then( function() {
             alert(`Mensaje de reseteo de contraseña enviado a: ${email}`);
             history.push(app.routes().login);
-        }).catch(error => alert(Auth.errorMessageTranslation(error)));
+            setOnRequest(false);
+        }).catch(error => {
+            alert(Auth.errorMessageTranslation(error));
+            setOnRequest(false);
+        });
     }
 
     return (
@@ -72,7 +79,7 @@ export function ResetPassword() {
                 onChange={_setEmail}
             />
             <Button
-                // type="submit"
+                disabled={onRequest}
                 fullWidth
                 variant="contained"
                 color="primary"

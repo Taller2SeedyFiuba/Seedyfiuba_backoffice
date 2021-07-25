@@ -10,7 +10,6 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -121,7 +120,6 @@ export function Metrics() {
     Client.getAllMetricsAdmin(app.getToken())
       .then(response => {
         setHistoricMetrics(response);
-        console.log(response);
       })
       .catch(error => {
         console.log(error);
@@ -166,7 +164,6 @@ export function Metrics() {
 
     Client.getMetricsAdmin(app.getToken(), intervalUsers, `${y1}-${m1}-${d1}`, `${y2}-${m2}-${d2}`)
       .then(response => {
-        console.log(response);
         setUserMetrics(response);
       })
       .catch(error => {
@@ -194,7 +191,6 @@ export function Metrics() {
     
     Client.getMetricsAdmin(app.getToken(), intervalProjects, `${y1}-${m1}-${d1}`, `${y2}-${m2}-${d2}`)
     .then(response => {
-      console.log(response);
       setProjectMetrics(response);
     })
     .catch(error => {
@@ -204,12 +200,10 @@ export function Metrics() {
 
   function _setIntervalUsers(value) {
     setIntervalUsers(value);
-    console.log(value);
   } 
 
   function _setIntervalProjects(value) {
     setIntervalProjects(value);
-    console.log(value);
   } 
 
   const handleDrawerOpen = () => {

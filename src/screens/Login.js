@@ -38,9 +38,12 @@ export function Login() {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [onRequest, setOnRequest] = React.useState(false);
     const history = useHistory();
 
-    async function trySignIn() {  // CHEQUEAR O CAMBIAR
+    async function trySignIn() {
+        setOnRequest(true);
+        
         try {
             await Auth.signInWithMailAndPassword(email, password);
             let token = await Auth.getIdToken(true);
@@ -48,6 +51,7 @@ export function Login() {
             Client.getUserData(token).then((resp) => {
                 app.loginRegisteredUSer(resp.id);
                 history.push(app.routes().users);
+                setOnRequest(false);
             }).catch((error) => {
                 if (Math.floor(error / 100) === 4){
                     app.loginRegisteredUSer("");
@@ -58,9 +62,11 @@ export function Login() {
                 } else {
                     console.log(error);
                 }
+                setOnRequest(false);
             });
         } catch (error) {
             console.log(error);
+            setOnRequest(false);
         };
     }
 
@@ -72,7 +78,7 @@ export function Login() {
             <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-            Sign in
+                Sign in
             </Typography>
             <form className={classes.form} noValidate>
             <TextField
@@ -97,7 +103,7 @@ export function Login() {
                 onChange={event => setPassword(event.target.value)}
             />
             <Button
-                // type="submit"
+                disabled={onRequest}
                 fullWidth
                 variant="contained"
                 color="primary"

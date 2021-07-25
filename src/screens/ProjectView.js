@@ -14,12 +14,12 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {useHistory, useParams} from "react-router-dom";
 import ListItems from '../components/ListItems';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import { app } from '../app/app';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
@@ -137,6 +137,10 @@ export function ProjectView() {
     history.push(app.routes().login);
   }
 
+  function goBack() {
+    history.goBack();
+  }
+
   React.useEffect(() => {
     Client.getProjectAdminByID(app.getToken(), id).then(response => {
       setProject(response);
@@ -157,6 +161,16 @@ export function ProjectView() {
           >
             <MenuIcon />
           </IconButton>
+
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={goBack}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Proyectos
           </Typography>

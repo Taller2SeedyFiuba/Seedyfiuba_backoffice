@@ -18,6 +18,7 @@ import  * as Auth from "../provider/auth-provider"
 export default function App() {
     React.useEffect(() => {
         Auth.init();
+        Auth.establishObserver();
     }, [])
 
     return (

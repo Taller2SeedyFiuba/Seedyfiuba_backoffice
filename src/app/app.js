@@ -1,8 +1,3 @@
-// import ApiClient from "communication/client/ApiClient";
-// import {getSetting} from "settings";
-// import FakeRequester from "communication/requester/FakeRequester";
-// import RemoteRequester from "communication/requester/RemoteRequester";
-
 class App {
     routes() {
         return {

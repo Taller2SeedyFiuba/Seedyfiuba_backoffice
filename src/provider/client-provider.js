@@ -1,52 +1,46 @@
-function sendData(url, token, data){
-  return fetch(url, {
-  	method: 'POST',
-  	//mode : 'no-cors',
-  	body: JSON.stringify(data),
-  	headers: {
-      'Authorization': 'Bearer ' + token,
-  		'Content-Type': 'application/json'
-  	}
-  }).then((response) => {
-    if(response.ok){
-      return response.json().then((resp) => resp.data);
-    }else{
-      throw response.status;
-    }
-  });
-};
-
-function getData(url, token){
-  console.log(url);
-  return fetch(url, {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer ' + token
-      }
-  }).then((response) => {
-    if(response.ok){
-      return response.json().then((resp) => resp.data);
-    }else{
-      throw response.status;
-    }
-  });
-};
-
-function patchData(url, token){
-  return fetch(url, {
-    method: 'PATCH',
-    //mode : 'no-cors',
+async function sendData(url, token, data){
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
     headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
     }
-  }).then((response) => {
-    if(response.ok){
-      return response.json().then((resp) => resp.data);
-    }else{
-      throw response.status;
+  });
+  if (response.ok) {
+    return response.json().then((resp) => resp.data);
+  } else {
+    throw response.status;
+  }
+};
+
+async function getData(url, token){
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + token
     }
   });
+  if (response.ok) {
+    return response.json().then((resp) => resp.data);
+  } else {
+    throw response.status;
+  }
+};
+
+async function patchData(url, token){
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (response.ok) {
+    return response.json().then((resp) => resp.data);
+  } else {
+    throw response.status;
+  }
 };
 
 // Users

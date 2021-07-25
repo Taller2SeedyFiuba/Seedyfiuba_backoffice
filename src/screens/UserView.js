@@ -14,6 +14,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {useHistory, useParams} from "react-router-dom";
 import ListItems from '../components/ListItems';
 import Card from '@material-ui/core/Card';
@@ -108,6 +109,7 @@ export function UserView() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [user, setUser] = React.useState('');
+  const [onRequest, setOnRequest] = React.useState(false);
   const history = useHistory();
 
   const handleDrawerOpen = () => {
@@ -119,17 +121,27 @@ export function UserView() {
   };
 
   const makeAdmin = () => {
+    setOnRequest(true);
+
     try {
       Client.promoteUserAdminByID(app.getToken(), user.id).then(() => setUser({...user, isadmin:true}));
+
     } catch (error) {
-      console.log(error); // CAMBIAR
+      console.log(error);
+      setOnRequest(false);
     }
   }
 
+  function goBack() {
+    history.goBack();
+  }
+
   function signOut() {
+    setOnRequest(true);
     Auth.signOut();
     app.signOutUser();
     history.push(app.routes().login);
+    setOnRequest(false);
   }
 
   React.useEffect(() => {
@@ -152,6 +164,16 @@ export function UserView() {
           >
             <MenuIcon />
           </IconButton>
+
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={goBack}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Usuarios
           </Typography>
@@ -159,6 +181,7 @@ export function UserView() {
               variant="contained"
               className={classes.submit}
               onClick={signOut}
+              disabled={onRequest}
             >
               CERRAR SESIÓN
           </Button>
@@ -208,7 +231,7 @@ export function UserView() {
                     <Typography variant="body2" color="textSecondary" component="p">
                       Es admin?: {user.isadmin ? 'Si' : 'No'}
                     </Typography>
-                    <Button onClick={makeAdmin} disabled={user.isadmin} size="medium" color="primary">
+                    <Button onClick={makeAdmin} disabled={user.isadmin || onRequest} size="medium" color="primary">
                       Hacer Admin
                     </Button>
                   </CardContent>

@@ -119,7 +119,8 @@ const stages = raw_stages.map((element) =>{
 
 export function Projects() {
     const classes = useStyles();
-    const [onRequest, setOnRequest] = React.useState(false);
+    const [onRequestLogout, setOnRequestLogout] = React.useState(false);
+    const [onRequestSearch, setOnRequestSearch] = React.useState(false);
     const [open, setOpen] = React.useState(true);
     const [projects, setProjects] = React.useState('');
     const limit = 10;
@@ -128,10 +129,6 @@ export function Projects() {
     const [tags, setTags] = React.useState('');
     const [type, setType] = React.useState('');
     const [stage, setStage] = React.useState('');
-    const [location, setLocation] = React.useState('');
-    const [dist, setDist] = React.useState('');
-    const [lat, setLat] = React.useState('');
-    const [lng, setLng] = React.useState('');
     const history = useHistory();
     
     function _setOwnerid(event) {  // CHEQUEAR O CAMBIAR
@@ -159,7 +156,7 @@ export function Projects() {
     };
     
     function searchProjects() {
-      setOnRequest(true);
+      setOnRequestSearch(true);
 
       let query = {};
 
@@ -170,11 +167,9 @@ export function Projects() {
       if (type) query.type = type;
       if (tags) query.tags = tags.split(' ');
 
-      console.log(query);
-
       Client.getProjectsAdmin(app.getToken(), query).then(response => {
           setProjects(response);
-          setOnRequest(false);
+          setOnRequestSearch(false);
       });
     }
 
@@ -187,9 +182,11 @@ export function Projects() {
     };
 
     function signOut() {
+        setOnRequestLogout(true);
         Auth.signOut();
         app.signOutUser();  
         history.push(app.routes().login);
+        setOnRequestLogout(false);
     }
 
     React.useEffect(() => {
@@ -217,6 +214,7 @@ export function Projects() {
                   variant="contained"
                   className={classes.submit}
                   onClick={signOut}
+                  disabled={onRequestLogout}
                 >
                   CERRAR SESIÓN
               </Button>
@@ -270,7 +268,6 @@ export function Projects() {
                           variant="outlined"
                           margin="normal"
                           label="Categoría"
-                        //   type="text"
                           select
                           required
                           fullWidth
@@ -303,7 +300,7 @@ export function Projects() {
                             ))}
                         </TextField>
                     <Button
-                        // type="submit"
+                        disabled={onRequestSearch}
                         fullWidth
                         variant="contained"
                         color="primary"
@@ -322,9 +319,9 @@ export function Projects() {
                     </form>
                     <ProjectsList data={projects} />
                     <div style={{flexDirection:'row', alignSelf:'center', marginTop: 15}}>
-                      <Button disabled={returnNotAble() || onRequest} onClick={() => setPage(page-1)}>{'<<'}</Button>
+                      <Button disabled={returnNotAble() || onRequestSearch} onClick={() => setPage(page-1)}>{'<<'}</Button>
                       {page}
-                      <Button disabled={increaseNotAble() || onRequest} onClick={() => setPage(page+1)}>{'>>'}</Button>
+                      <Button disabled={increaseNotAble() || onRequestSearch} onClick={() => setPage(page+1)}>{'>>'}</Button>
                     </div>
                   </Paper>
                 </Grid>

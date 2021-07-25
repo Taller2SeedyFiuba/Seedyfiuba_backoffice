@@ -1,7 +1,5 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import { useTheme } from '@material-ui/core/styles';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, BarChart, Bar, Cell, CartesianGrid, Tooltip, Legend } from 'recharts';
+import {XAxis, YAxis, ResponsiveContainer, BarChart, Bar, Tooltip, Legend } from 'recharts';
 import Title from './Title';
 import { Grid } from '@material-ui/core';
 import clsx from 'clsx';
@@ -21,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UserCharts(props) {
-  const theme = useTheme();
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
