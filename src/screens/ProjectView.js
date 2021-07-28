@@ -23,6 +23,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import { app } from '../app/app';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
+import DialogResponse from '../components/DialogResponse';
 
 const drawerWidth = 240;
 
@@ -121,6 +122,7 @@ export function ProjectView() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [project, setProject] = React.useState('');
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
   
   const handleDrawerOpen = () => {
@@ -144,12 +146,28 @@ export function ProjectView() {
   React.useEffect(() => {
     Client.getProjectAdminByID(app.getToken(), id).then(response => {
       setProject(response);
+    }).catch(error => {
+      setErrorMsg(Client.errorMessageTranslation(error));
     });
   }, [])
+
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
+  }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <DialogResponse
+        open={isDialogOpen()}
+        handleClose={closeDialog}
+        status={errorMsg.status}
+        errorMsg={errorMsg.detail}
+      />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton

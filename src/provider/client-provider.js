@@ -132,7 +132,7 @@ export async function getMetricsAdmin(token, timeinterval, fromdate, todate) {
 }
 
 function errorMessageTranslationAux(error){
-  if (Math.floor(error.code / 500) == 5) return 'Error en el servidor. Intente más tarde';
+  if (Math.floor(error.code / 500) === 5) return 'Error en el servidor. Intente más tarde';
 
   switch (error.message) {
     case 'id-in-use':
@@ -204,9 +204,9 @@ function errorMessageTranslationAux(error){
     case 'internal-server-error':
     return 'Falla interna del servidor';
 
+    default:
+      return error.message
   }
-
-  return error.message; // 'Solicitud inválida, revise los campos indicados';
 }
 
 export function errorMessageTranslation(error){

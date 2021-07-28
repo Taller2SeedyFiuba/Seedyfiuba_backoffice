@@ -21,6 +21,7 @@ import ProjectsList from '../components/ProjectsList';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
 import { app } from '../app/app';
+import DialogResponse from '../components/DialogResponse';
 
 const drawerWidth = 240;
 
@@ -103,19 +104,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const raw_categories = ['', 'arte', 'comida', 'danza', 'diseño', 'fotografía', 
-'legal', 'manualidades', 'música', 'periodismo', 'publicaciones', 'refugio', 
-'software', 'tecnología', 'transporte'];
+const categories = [
+  {label: "", value: ""},
+  {label: "Arte", value: "arte"},
+  {label: "Comida", value: "comida"},
+  {label: "Danza", value: "danza"},
+  {label: "Diseño", value: "diseño"},
+  {label: "Fotografía", value: "fotografía"},
+  {label: "Legal", value: "legal"},
+  {label: "Manualidades", value: "manualidades"},
+  {label: "Música", value: "música"},
+  {label: "Periodismo", value: "periodismo"},
+  {label: "Publicaciones", value: "publicaciones"},
+  {label: "Refugio", value: "refugio"},
+  {label: "Software", value: "software"},
+  {label: "Tecnología", value: "tecnología"},
+  {label: "Transporte", value: "transporte"},
+]
 
-const categories = raw_categories.map((element) => {
-    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
-})
-
-const raw_stages = ['', 'en curso', 'cancelado', 'completado']
-
-const stages = raw_stages.map((element) =>{
-    return { label: element.charAt(0).toUpperCase() + element.slice(1), value: element }
-})
+const stages = [
+  {label: '', value: ''},
+  {label: 'Por financiar', value: 'funding'},
+  {label: 'En progreso', value: 'in_progress'},
+  {label: 'Completado', value: 'completed'},
+  {label: 'Cancelado', value: 'canceled'},
+]
 
 export function Projects() {
     const classes = useStyles();
@@ -129,24 +142,9 @@ export function Projects() {
     const [tags, setTags] = React.useState('');
     const [type, setType] = React.useState('');
     const [stage, setStage] = React.useState('');
+    const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
     const history = useHistory();
     
-    function _setOwnerid(event) {  // CHEQUEAR O CAMBIAR
-      setOwnerid(event.target.value);
-    }
-    
-    function _setTags(event) {  // CHEQUEAR O CAMBIAR
-      setTags(event.target.value);
-    }
-    
-    function _setType(event) {  // CHEQUEAR O CAMBIAR
-      setType(event.target.value);
-    }
-    
-    function _setStage(event) {  // CHEQUEAR O CAMBIAR
-      setStage(event.target.value);
-    }
-
     const handleDrawerOpen = () => {
       setOpen(true);
     };
@@ -170,15 +168,18 @@ export function Projects() {
       Client.getProjectsAdmin(app.getToken(), query).then(response => {
           setProjects(response);
           setOnRequestSearch(false);
+      }).catch(error => {
+        console.log(error);
+        setErrorMsg(Client.errorMessageTranslation(error));
       });
     }
 
     function returnNotAble() {
-        return page <= 1;
+      return page <= 1;
     };
 
     function increaseNotAble() {
-        return projects.length < limit;
+      return projects.length < limit;
     };
 
     function signOut() {
@@ -193,9 +194,23 @@ export function Projects() {
       searchProjects();
     },[page])
 
+    function isDialogOpen() {
+      return errorMsg.detail !== "";
+    }
+  
+    function closeDialog() {
+      setErrorMsg({status: "", detail: ""});
+    }
+
     return (
         <div className={classes.root}>
           <CssBaseline />
+          <DialogResponse
+            open={isDialogOpen()}
+            handleClose={closeDialog}
+            status={errorMsg.status}
+            errorMsg={errorMsg.detail}
+          />
           <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
             <Toolbar className={classes.toolbar}>
               <IconButton
@@ -251,7 +266,7 @@ export function Projects() {
                           fullWidth
                           autoFocus
                           value={ownerid}
-                          onChange={_setOwnerid}
+                          onChange={event => setOwnerid(event.target.value)}
                       />
                       <TextField
                           variant="outlined"
@@ -262,7 +277,7 @@ export function Projects() {
                           fullWidth
                           autoFocus
                           value={tags}
-                          onChange={_setTags}
+                          onChange={event => setTags(event.target.value)}
                       />
                       <TextField
                           variant="outlined"
@@ -273,7 +288,7 @@ export function Projects() {
                           fullWidth
                           autoFocus
                           value={type}
-                          onChange={_setType}
+                          onChange={event => setType(event.target.value)}
                       >
                           {categories.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -291,7 +306,7 @@ export function Projects() {
                           fullWidth
                           autoFocus
                           value={stage}
-                          onChange={_setStage}
+                          onChange={event => setStage(event.target.value)}
                       >
                             {stages.map((option) => (
                                 <option key={option.value} value={option.value}>

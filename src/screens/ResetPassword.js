@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useHistory} from "react-router-dom";
 import {app} from '../app/app'
 import * as Auth from '../provider/auth-provider'
+import DialogResponse from '../components/DialogResponse';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,11 +38,8 @@ export function ResetPassword() {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
     const [onRequest, setOnRequest] = React.useState(false);
+    const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
     const history = useHistory();
-
-    function _setEmail(event) {
-        setEmail(event.target.value);
-    }
 
     function tryResetPassword() {
         setOnRequest(true);
@@ -51,14 +49,29 @@ export function ResetPassword() {
             history.push(app.routes().login);
             setOnRequest(false);
         }).catch(error => {
-            alert(Auth.errorMessageTranslation(error));
+            console.log(error);
+            setErrorMsg(Auth.errorMessageTranslation(error));
             setOnRequest(false);
         });
+    }
+
+    function isDialogOpen() {
+        return errorMsg.detail !== "";
+    }
+    
+    function closeDialog() {
+        setErrorMsg({status: "", detail: ""});
     }
 
     return (
         <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <DialogResponse
+            open={isDialogOpen()}
+            handleClose={closeDialog}
+            status={errorMsg.status}
+            errorMsg={errorMsg.detail}
+        />
         <div className={classes.paper}>
             <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
@@ -76,7 +89,7 @@ export function ResetPassword() {
                 fullWidth
                 autoFocus
                 value={email}
-                onChange={_setEmail}
+                onChange={event => setEmail(event.target.value)}
             />
             <Button
                 disabled={onRequest}

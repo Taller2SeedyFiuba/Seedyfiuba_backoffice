@@ -20,6 +20,7 @@ import UsersList from '../components/UsersList';
 import { app } from '../app/app';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
+import DialogResponse from '../components/DialogResponse';
 
 const drawerWidth = 240;
 
@@ -109,6 +110,7 @@ export function Users() {
   const [open, setOpen] = React.useState(true);
   const [users, setUsers] = React.useState('');
   const [page, setPage] = React.useState(1);
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
   
   const handleDrawerOpen = () => {
@@ -135,15 +137,34 @@ export function Users() {
 
   React.useEffect(() => {
     setOnRequest(true);
-    Client.getUsersAdmin(app.getToken(), limit, page).then(response => {
-      setUsers(response);
-      setOnRequest(false);
-    });
+    Client.getUsersAdmin(app.getToken(), limit, page)
+      .then(response => {
+        setUsers(response);
+        setOnRequest(false);
+      })
+      .catch(error => {
+        console.log(error);
+        setErrorMsg(Client.errorMessageTranslation(error));
+      });
   }, [page])
+
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
+  }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <DialogResponse
+        open={isDialogOpen()}
+        handleClose={closeDialog}
+        status={errorMsg.status}
+        errorMsg={errorMsg.detail}
+      />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton

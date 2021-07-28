@@ -22,6 +22,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { app } from '../app/app';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
+import DialogResponse from '../components/DialogResponse';
 
 const drawerWidth = 240;
 
@@ -110,8 +111,18 @@ export function UserView() {
   const [open, setOpen] = React.useState(true);
   const [user, setUser] = React.useState('');
   const [onRequest, setOnRequest] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
-
+  
+    React.useEffect(() => {
+      Client.getUserAdminByID(app.getToken(), id)
+        .then(response => {
+          setUser(response);
+        }).catch(error => {
+          setErrorMsg(Client.errorMessageTranslation(error));
+        });
+    }, [])
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -123,13 +134,12 @@ export function UserView() {
   const makeAdmin = () => {
     setOnRequest(true);
 
-    try {
-      Client.promoteUserAdminByID(app.getToken(), user.id).then(() => setUser({...user, isadmin:true}));
-
-    } catch (error) {
-      console.log(error);
-      setOnRequest(false);
-    }
+    Client.promoteUserAdminByID(app.getToken(), user.id)
+      .then(response => 
+      setUser({...user, isadmin:true})
+    ).catch(error => {
+      setErrorMsg(Client.errorMessageTranslation(error));
+    });
   }
 
   function goBack() {
@@ -144,15 +154,23 @@ export function UserView() {
     setOnRequest(false);
   }
 
-  React.useEffect(() => {
-    Client.getUserAdminByID(app.getToken(), id).then(response => {
-      setUser(response);
-    });
-  }, [])
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
+  }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <DialogResponse
+        open={isDialogOpen()}
+        handleClose={closeDialog}
+        status={errorMsg.status}
+        errorMsg={errorMsg.detail}
+      />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton

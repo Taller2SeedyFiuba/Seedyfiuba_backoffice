@@ -21,6 +21,7 @@ import UserCharts from '../components/UserCharts';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
 import { app } from '../app/app';
+import DialogResponse from '../components/DialogResponse';
 
 const drawerWidth = 240;
 
@@ -114,6 +115,7 @@ export function Metrics() {
   const [projectMetrics, setProjectMetrics] = React.useState(null);
   const [intervalUsers, setIntervalUsers] = React.useState("hour");
   const [intervalProjects, setIntervalProjects] = React.useState("hour");
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
   
   React.useEffect(() => {
@@ -123,6 +125,7 @@ export function Metrics() {
       })
       .catch(error => {
         console.log(error);
+        setErrorMsg(Client.errorMessageTranslation(error));
       });
 
     let date = new Date();
@@ -141,6 +144,7 @@ export function Metrics() {
       })
       .catch(error => {
         console.log(error);
+        setErrorMsg(Client.errorMessageTranslation(error));
       });
   },[]);
 
@@ -168,6 +172,7 @@ export function Metrics() {
       })
       .catch(error => {
         console.log(error);
+        setErrorMsg(Client.errorMessageTranslation(error));
       });
   },[intervalUsers]);
 
@@ -195,6 +200,7 @@ export function Metrics() {
     })
     .catch(error => {
       console.log(error);
+      setErrorMsg(Client.errorMessageTranslation(error));
     });
   },[intervalProjects]);
 
@@ -223,9 +229,23 @@ export function Metrics() {
     return historicMetrics && presentMetrics && userMetrics && projectMetrics;
   }
 
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <DialogResponse
+        open={isDialogOpen()}
+        handleClose={closeDialog}
+        status={errorMsg.status}
+        errorMsg={errorMsg.detail}
+      />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton
