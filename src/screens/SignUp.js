@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from '../app/app'
 import {useHistory} from "react-router-dom";
+import DialogResponse from '../components/DialogResponse';
 import * as Auth from "../provider/auth-provider"
 import * as Client from "../provider/client-provider"
 
@@ -39,6 +40,8 @@ export function SignUp() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confPassword, setConfPassword] = React.useState('');
+  const [onRequest, setOnRequest] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
 
   function _setEmail(event) {  // CHEQUEAR O CAMBIAR
@@ -59,6 +62,7 @@ export function SignUp() {
   }
 
   async function trySignUp() {  // CHEQUEAR O CAMBIAR
+    setOnRequest(true);
     if (checkMailAndPassword()) {
       try {
         await Auth.createUserWithMailAndPassword(email, password);
@@ -68,6 +72,7 @@ export function SignUp() {
         Client.getUserData(token).then((resp) => {
             app.loginRegisteredUSer(resp.id);
             history.push(app.routes().users);
+            setOnRequest(false);
         }).catch((error) => {
             if (Math.floor(error / 100) === 4){
                 app.loginRegisteredUSer("");
@@ -77,20 +82,38 @@ export function SignUp() {
                 });
             } else {
                 console.log(error);
+                setErrorMsg(Client.errorMessageTranslation(error));
             }
+            setOnRequest(false);
         });
       } catch (error) {
           console.log(error);
+          setErrorMsg(Auth.errorMessageTranslation(error));
+          setOnRequest(false);
       };
     } else {
       alert("Error en email o contraseña.");
     }
   }
 
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+       <DialogResponse
+                open={isDialogOpen()}
+                handleClose={closeDialog}
+                status={errorMsg.status}
+                errorMsg={errorMsg.detail}
+            />
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -138,7 +161,7 @@ export function SignUp() {
             </Grid>
           </Grid>
           <Button
-            // type="submit"
+            disabled={onRequest}
             fullWidth
             variant="contained"
             color="primary"

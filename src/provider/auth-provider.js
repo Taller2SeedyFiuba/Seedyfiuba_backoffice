@@ -44,22 +44,22 @@ export async function sendPasswordResetEmail(email){
 export function errorMessageTranslation(error){
 	switch (error.code) {
     case 'auth/email-already-exists':
-      return 'El correo electrónico ya está asociado a una cuenta.';
+      return {detail: 'El correo electrónico ya está asociado a una cuenta.'};
 
     case 'auth/invalid-email':
-      return 'El corre electrónico no es válido.';
+      return {detail: 'El corre electrónico no es válido.'};
 
     case 'auth/invalid-password':
-      return 'La contraseña no es válida.';
+      return {detail: 'La contraseña no es válida.'};
 
     case 'auth/wrong-password':
-      return 'La contraseña no es correcta.'
+      return {detail: 'La contraseña no es correcta.'};
 
     case 'auth/user-not-found':
-      return 'El usuario indicado no existe.';
+      return {detail: 'El usuario indicado no existe.'};
 
     default:
-      return 'Error interno. Revise sus credenciales o inténtelo más tarde.'
+      return {detail: 'Error interno. Revise sus credenciales o inténtelo más tarde.'};
   }
 };
 

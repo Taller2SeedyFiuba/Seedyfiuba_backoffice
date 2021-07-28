@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {app} from '../app/app'
 import {useHistory} from "react-router-dom";
+import DialogResponse from '../components/DialogResponse';
 import * as Auth from '../provider/auth-provider'
 import * as Client from '../provider/client-provider'
 
@@ -39,6 +40,7 @@ export function Login() {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [onRequest, setOnRequest] = React.useState(false);
+    const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
     const history = useHistory();
 
     async function trySignIn() {
@@ -60,20 +62,36 @@ export function Login() {
                       state: {email: email}
                     });
                 } else {
+                    setErrorMsg(Client.errorMessageTranslation(error));
                     console.log(error);
                 }
                 setOnRequest(false);
             });
         } catch (error) {
             console.log(error);
+            setErrorMsg(Auth.errorMessageTranslation(error));
             setOnRequest(false);
         };
     }
+
+    function isDialogOpen() {
+        return errorMsg.detail !== "";
+      }
+    
+      function closeDialog() {
+        setErrorMsg({status: "", detail: ""});
+      }
 
     return (
         <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
+            <DialogResponse
+                open={isDialogOpen()}
+                handleClose={closeDialog}
+                status={errorMsg.status}
+                errorMsg={errorMsg.detail}
+            />
             <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
             </Avatar>

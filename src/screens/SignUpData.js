@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {app} from '../app/app'
 import {useHistory} from "react-router-dom";
+import DialogResponse from '../components/DialogResponse';
 import * as Client from '../provider/client-provider'
 
 const useStyles = makeStyles((theme) => ({
@@ -38,19 +39,8 @@ export function SignUpData() {
   const [lastName, setLastName] = React.useState('');
   const [birthDate, setBirthDate] = React.useState('');
   const [onRequest, setOnRequest] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
-
-  function _setFirstName(event) {  // CHEQUEAR O CAMBIAR
-    setFirstName(event.target.value);
-  }
-
-  function _setLastName(event) {  // CHEQUEAR O CAMBIAR
-    setLastName(event.target.value);
-  }
-
-  function _setBirthDate(event) {  // CHEQUEAR O CAMBIAR
-    setBirthDate(event.target.value);
-  }
 
   function trySignUpData() {
     setOnRequest(true);
@@ -68,14 +58,29 @@ export function SignUpData() {
       setOnRequest(false);
     }).catch(error => {
       console.log(error);
+      setErrorMsg(Client.errorMessageTranslation(error));
       setOnRequest(false);
     })
+  }
+  
+  function isDialogOpen() {
+    return errorMsg.detail !== "";
+  }
+
+  function closeDialog() {
+    setErrorMsg({status: "", detail: ""});
   }
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        <DialogResponse
+                open={isDialogOpen()}
+                handleClose={closeDialog}
+                status={errorMsg.status}
+                errorMsg={errorMsg.detail}
+        />
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -94,7 +99,7 @@ export function SignUpData() {
                 fullWidth
                 autoFocus
                 value={firstName}
-                onChange={_setFirstName}
+                onChange={event => setFirstName(event.target.value)}
             />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -107,7 +112,7 @@ export function SignUpData() {
                 fullWidth
                 autoFocus
                 value={lastName}
-                onChange={_setLastName}
+                onChange={event => setLastName(event.target.value)}
             />
             </Grid>
             <Grid item xs={12}>
@@ -120,7 +125,7 @@ export function SignUpData() {
                 fullWidth
                 autoFocus
                 value={birthDate}
-                onChange={_setBirthDate}
+                onChange={event => setBirthDate(event.target.value)}
               />
             </Grid>
           </Grid>
