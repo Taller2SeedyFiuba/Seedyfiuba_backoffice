@@ -67,29 +67,33 @@ export function SignUp() {
       try {
         await Auth.createUserWithMailAndPassword(email, password);
         let token = await Auth.getIdToken(true);
-        app.loginUser(token);
-        app.setEmail(email);
-        Client.getUserData(token).then((resp) => {
+        Client.getUserData(token)
+          .then((resp) => {
+            app.loginUser(token);
+            app.setEmail(email);
             app.loginRegisteredUSer(resp.id);
             history.push(app.routes().users);
             setOnRequest(false);
-        }).catch((error) => {
+          })
+          .catch((error) => {
             if (Math.floor(error / 100) === 4){
-                app.loginRegisteredUSer("");
-                history.push({
-                  pathname: app.routes().signupdata, 
-                  state: {email: email}
-                });
+              app.loginUser(token);
+              app.setEmail(email);
+              app.loginRegisteredUSer("");
+              history.push({
+                pathname: app.routes().signupdata, 
+                state: {email: email}
+              });
             } else {
-                console.log(error);
-                setErrorMsg(Client.errorMessageTranslation(error));
+              console.log(error);
+              setErrorMsg(Client.errorMessageTranslation(error));
             }
             setOnRequest(false);
-        });
+          });
       } catch (error) {
-          console.log(error);
-          setErrorMsg(Auth.errorMessageTranslation(error));
-          setOnRequest(false);
+        console.log(error);
+        setErrorMsg(Auth.errorMessageTranslation(error));
+        setOnRequest(false);
       };
     } else {
       alert("Error en email o contraseña.");

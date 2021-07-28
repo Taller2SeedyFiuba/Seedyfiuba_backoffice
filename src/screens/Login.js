@@ -49,13 +49,14 @@ export function Login() {
         try {
             await Auth.signInWithMailAndPassword(email, password);
             let token = await Auth.getIdToken(true);
-            app.loginUser(token);
             Client.getUserData(token).then((resp) => {
+                app.loginUser(token);
                 app.loginRegisteredUSer(resp.id);
                 history.push(app.routes().users);
                 setOnRequest(false);
             }).catch((error) => {
                 if (Math.floor(error / 100) === 4){
+                    app.loginUser(token);
                     app.loginRegisteredUSer("");
                     history.push({
                       pathname: app.routes().signupdata, 
