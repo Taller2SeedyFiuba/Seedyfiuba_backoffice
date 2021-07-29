@@ -44,18 +44,6 @@ export function SignUp() {
   const [errorMsg, setErrorMsg] = React.useState({status: "", detail: ""});
   const history = useHistory();
 
-  function _setEmail(event) {  // CHEQUEAR O CAMBIAR
-    setEmail(event.target.value);
-  }
-
-  function _setPassword(event) {  // CHEQUEAR O CAMBIAR
-    setPassword(event.target.value);
-  }
-
-  function _setConfPassword(event) {  // CHEQUEAR O CAMBIAR
-    setConfPassword(event.target.value);
-  }
-
   function checkMailAndPassword() {
     return ((email.includes('@')) && (email.length > 5) && 
       (password.length > 5) && (password === confPassword));
@@ -67,18 +55,16 @@ export function SignUp() {
       try {
         await Auth.createUserWithMailAndPassword(email, password);
         let token = await Auth.getIdToken(true);
+        app.loginUser(token);
+        app.setEmail(email);
         Client.getUserData(token)
           .then((resp) => {
-            app.loginUser(token);
-            app.setEmail(email);
             app.loginRegisteredUSer(resp.id);
             history.push(app.routes().users);
             setOnRequest(false);
           })
           .catch((error) => {
             if (Math.floor(error / 100) === 4){
-              app.loginUser(token);
-              app.setEmail(email);
               app.loginRegisteredUSer("");
               history.push({
                 pathname: app.routes().signupdata, 
@@ -89,7 +75,7 @@ export function SignUp() {
               setErrorMsg(Client.errorMessageTranslation(error));
             }
             setOnRequest(false);
-          });
+        });
       } catch (error) {
         console.log(error);
         setErrorMsg(Auth.errorMessageTranslation(error));
@@ -136,7 +122,7 @@ export function SignUp() {
                 fullWidth
                 autoFocus
                 value={email}
-                onChange={_setEmail}
+                onChange={event => setEmail(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,7 +134,7 @@ export function SignUp() {
                 required
                 fullWidth
                 value={password}
-                onChange={_setPassword}
+                onChange={event => setPassword(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -160,7 +146,7 @@ export function SignUp() {
                 required
                 fullWidth
                 value={confPassword}
-                onChange={_setConfPassword}
+                onChange={event => setConfPassword(event.target.value)}
               />
             </Grid>
           </Grid>
