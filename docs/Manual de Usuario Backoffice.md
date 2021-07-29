@@ -83,7 +83,13 @@ En la sección de Proyectos se podrán listar todos los proyectos del sistema, f
 
 <center><img src="img/10.png" width="950"/></center>
 
+2. Para ver más proyectos, vaya hacia abajo en la página y presione el botón para avanzar o para retroceder (éstas aparecerán en gris y deshabilitadas en caso de que no haya más usuarios que mostrar).
+
+<center><img src="img/13.png" width="950"/></center>
+
 ### Información de un Proyecto
+
+1. Para ingresar a un proyecto, presione sobre la tarjeta correspondiente. Será redirigido y podrá ver la información detallada del proyecto.
 
 <center><img src="img/11.png" width="950"/></center>
 
