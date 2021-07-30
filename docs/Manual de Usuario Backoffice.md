@@ -6,6 +6,8 @@
 
 ## Introducción
 
+El Backoffice es una aplicación web diseñada para la supervisión y control de usuarios y proyectos. Se puede utilizar ingresando en: https://seedyfiuba-autenticacion.web.app/
+
 ## Primeros Pasos
 
 ### Creación de Cuenta
@@ -24,7 +26,7 @@ Si es la primera vez que utiliza el servicio de Backoffice o busca crearse una n
 
 <center><img src="img/3.png" width="950"/></center>
 
-4. Una vez completo el registro, se lo llevará a la pantalla principal del Backoffice, donde le aparecerá un mensaje de error hasta que se le otorgue el poder de administrador.
+4. Una vez finalizado el registro, se lo llevará a la pantalla principal del Backoffice, donde le aparecerá un mensaje de error hasta que se le otorgue el poder de administrador. Dicho poder debe ser solicitado a un administrador del sistema.
 
 ### Ingreso con Cuenta Propia
 
@@ -65,6 +67,10 @@ En la sección de Usuarios se podrán listar todos los usuarios del sistema, rev
 2. Se lo redirigirá a una pantalla donde podrá ver toda la información del usuario seleccionado
 
 <center><img src="img/5.png" width="950"/></center>
+
+3. En caso de querer promocionar un usuario a administrador, se debe presionar sobre 'HACER ADMIN'.
+
+<center><img src="img/5.1.png" width="950"/></center>
 
 ## Administración de Proyectos
 
